@@ -141,3 +141,4 @@ C:\Users\joao.macanhao\Desktop\Korp_Teste_Joao_Leonardo_Macanhao\stock-service\o
 C:\Users\joao.macanhao\Desktop\Korp_Teste_Joao_Leonardo_Macanhao\stock-service\obj\Debug\net8.0\stock-service.pdb
 C:\Users\joao.macanhao\Desktop\Korp_Teste_Joao_Leonardo_Macanhao\stock-service\obj\Debug\net8.0\stock-service.genruntimeconfig.cache
 C:\Users\joao.macanhao\Desktop\Korp_Teste_Joao_Leonardo_Macanhao\stock-service\obj\Debug\net8.0\ref\stock-service.dll
+C:\Users\joao.macanhao\Desktop\Korp_Teste_Joao_Leonardo_Macanhao\stock-service\obj\Debug\net8.0\stock-service.sourcelink.json
