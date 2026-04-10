@@ -35,4 +35,16 @@ public class ProductsController : ControllerBase
         await _context.SaveChangesAsync();
         return NoContent();
     }
+
+    [HttpPut("{id}/deduct")]
+public async Task<IActionResult> DeductStock(int id, [FromBody] int quantity)
+{
+    var product = await _context.Products.FindAsync(id);
+    if (product == null) return NotFound();
+    if (product.StockBalance < quantity) return BadRequest("Saldo insuficiente.");
+
+    product.StockBalance -= quantity;
+    await _context.SaveChangesAsync();
+    return NoContent();
+}
 }

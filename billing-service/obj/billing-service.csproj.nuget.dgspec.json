@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\joao.macanhao\\Desktop\\Korp_Teste_Joao_Leonardo_Macanhao\\stock-service\\stock-service.csproj": {}
+    "C:\\Users\\joao.macanhao\\Desktop\\Korp_Teste_Joao_Leonardo_Macanhao\\billing-service\\billing-service.csproj": {}
   },
   "projects": {
-    "C:\\Users\\joao.macanhao\\Desktop\\Korp_Teste_Joao_Leonardo_Macanhao\\stock-service\\stock-service.csproj": {
+    "C:\\Users\\joao.macanhao\\Desktop\\Korp_Teste_Joao_Leonardo_Macanhao\\billing-service\\billing-service.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\joao.macanhao\\Desktop\\Korp_Teste_Joao_Leonardo_Macanhao\\stock-service\\stock-service.csproj",
-        "projectName": "stock-service",
-        "projectPath": "C:\\Users\\joao.macanhao\\Desktop\\Korp_Teste_Joao_Leonardo_Macanhao\\stock-service\\stock-service.csproj",
-        "packagesPath": "C:\\Users\\joao.macanhao\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\joao.macanhao\\Desktop\\Korp_Teste_Joao_Leonardo_Macanhao\\stock-service\\obj\\",
+        "projectUniqueName": "C:\\Users\\joao.macanhao\\Desktop\\Korp_Teste_Joao_Leonardo_Macanhao\\billing-service\\billing-service.csproj",
+        "projectName": "billing-service",
+        "projectPath": "C:\\Users\\joao.macanhao\\Desktop\\Korp_Teste_Joao_Leonardo_Macanhao\\billing-service\\billing-service.csproj",
+        "packagesPath": "C:\\Users\\joao.m.tecnico\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\joao.macanhao\\Desktop\\Korp_Teste_Joao_Leonardo_Macanhao\\billing-service\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\joao.macanhao\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\joao.m.tecnico\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -47,21 +47,9 @@
               "target": "Package",
               "version": "[8.0.25, )"
             },
-            "Microsoft.EntityFrameworkCore.Design": {
-              "target": "Package",
-              "version": "[8.0.10, )"
-            },
-            "Microsoft.EntityFrameworkCore.SqlServer": {
-              "target": "Package",
-              "version": "[8.0.10, )"
-            },
-            "Microsoft.EntityFrameworkCore.Tools": {
-              "target": "Package",
-              "version": "[8.0.10, )"
-            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
-              "version": "[10.1.7, )"
+              "version": "[6.6.2, )"
             }
           },
           "imports": [

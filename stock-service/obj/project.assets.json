@@ -4380,7 +4380,7 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\joao.m.tecnico\\.nuget\\packages\\": {}
+    "C:\\Users\\joao.macanhao\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
@@ -4388,11 +4388,11 @@
       "projectUniqueName": "C:\\Users\\joao.macanhao\\Desktop\\Korp_Teste_Joao_Leonardo_Macanhao\\stock-service\\stock-service.csproj",
       "projectName": "stock-service",
       "projectPath": "C:\\Users\\joao.macanhao\\Desktop\\Korp_Teste_Joao_Leonardo_Macanhao\\stock-service\\stock-service.csproj",
-      "packagesPath": "C:\\Users\\joao.m.tecnico\\.nuget\\packages\\",
+      "packagesPath": "C:\\Users\\joao.macanhao\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\joao.macanhao\\Desktop\\Korp_Teste_Joao_Leonardo_Macanhao\\stock-service\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\joao.m.tecnico\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\joao.macanhao\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
