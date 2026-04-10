@@ -1,0 +1,43 @@
+.home-container {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.cards {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  margin-top: 32px;
+  flex-wrap: wrap;
+}
+
+.card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 24px;
+  max-width: 300px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  h3 {
+    margin: 0 0 12px 0;
+    color: #1976d2;
+  }
+
+  p {
+    color: #666;
+    margin-bottom: 16px;
+  }
+
+  a {
+    text-decoration: none;
+    color: white;
+    background: #1976d2;
+    padding: 8px 16px;
+    border-radius: 4px;
+    display: inline-block;
+
+    &:hover {
+      background: #1565c0;
+    }
+  }
+}
