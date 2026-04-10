@@ -5,7 +5,7 @@ using StockService.Models;
 
 namespace StockService.Controllers;
 
-[ApiController]
+[ApiController] //
 [Route("api/[controller]")]
 public class ProductsController : ControllerBase
 {
