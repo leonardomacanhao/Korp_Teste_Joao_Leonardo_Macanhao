@@ -10,11 +10,11 @@
         "projectUniqueName": "C:\\Users\\joao.macanhao\\Desktop\\Korp_Teste_Joao_Leonardo_Macanhao\\billing-service\\billing-service.csproj",
         "projectName": "billing-service",
         "projectPath": "C:\\Users\\joao.macanhao\\Desktop\\Korp_Teste_Joao_Leonardo_Macanhao\\billing-service\\billing-service.csproj",
-        "packagesPath": "C:\\Users\\joao.m.tecnico\\.nuget\\packages\\",
+        "packagesPath": "C:\\Users\\joao.macanhao\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\joao.macanhao\\Desktop\\Korp_Teste_Joao_Leonardo_Macanhao\\billing-service\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\joao.m.tecnico\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\joao.macanhao\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -46,6 +46,16 @@
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
               "version": "[8.0.25, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.4, )"
+            },
+            "Microsoft.EntityFrameworkCore.Sqlite": {
+              "target": "Package",
+              "version": "[8.0.4, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",

@@ -15,4 +15,7 @@ public class Product
 
     [Range(0, double.MaxValue)]
     public int StockBalance { get; set; }
+    
+    // ✅ Para soft delete (opcional, mas recomendado)
+    //public bool IsActive { get; set; } = true;
 }

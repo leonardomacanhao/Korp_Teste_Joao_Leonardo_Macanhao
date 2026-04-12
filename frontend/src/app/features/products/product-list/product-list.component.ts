@@ -8,6 +8,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router, RouterLink } from '@angular/router';
 import { catchError, finalize, Observable, throwError } from 'rxjs';
 
+// ✅ CAMINHOS CORRIGIDOS (3 níveis para subir até 'app')
 import { Product } from '../../../shared/models/product.model';
 import { StockService } from '../../../core/services/stock.service';
 
@@ -27,7 +28,7 @@ import { StockService } from '../../../core/services/stock.service';
   styleUrl: './product-list.component.scss'
 })
 export class ProductListComponent implements OnInit {
-  // 💡 Injeção de dependências (Angular 14+)
+  // 💉 Injeção de dependências
   private stockService = inject(StockService);
   private snackBar = inject(MatSnackBar);
   private router = inject(Router);
@@ -36,49 +37,57 @@ export class ProductListComponent implements OnInit {
   dataSource = new MatTableDataSource<Product>();
   displayedColumns: string[] = ['code', 'description', 'stockBalance', 'actions'];
 
-  // 🔄 Estados da interface
+  // 🔄 Estado
   loading = false;
   error: string | null = null;
 
-  // 🎯 Ciclo de vida do Angular: ngOnInit
-  // Executado UMA VEZ quando o componente é inicializado
+  // 🎯 Ciclo de vida
   ngOnInit(): void {
     this.loadProducts();
   }
 
-  // 📥 Método para carregar produtos do backend
+  // 📥 Carregar produtos (filtrando inativos)
   loadProducts(): void {
     this.loading = true;
     this.error = null;
 
-    // 💡 RxJS: Observable + pipe + catchError + finalize
     this.stockService.getProducts().pipe(
-      // Se der erro, capturamos e transformamos em mensagem amigável
       catchError((err) => {
-        this.error = 'Não foi possível carregar os produtos. Verifique se o backend está rodando.';
-        this.snackBar.open(this.error, 'Fechar', { duration: 5000, panelClass: 'error-snack' });
+        this.error = 'Não foi possível carregar os produtos.';
+        this.snackBar.open(this.error, 'Fechar', { duration: 5000 });
         return throwError(() => err);
       }),
-      // finalize: executa SEMPRE, seja sucesso ou erro (ótimo para esconder loading)
-      finalize(() => {
-        this.loading = false;
-      })
+      finalize(() => { this.loading = false; })
     ).subscribe({
       next: (products) => {
-        this.dataSource.data = products;
-        this.snackBar.open('Produtos carregados com sucesso!', 'Fechar', { duration: 3000 });
+        // Filtra produtos com código que NÃO começa com [INATIVO]
+        this.dataSource.data = products.filter(p => !p.code?.startsWith('[INATIVO]'));
       }
-      // O erro já foi tratado no catchError acima
     });
   }
 
-  // ➕ Navegar para tela de cadastro
+  // 🔍 Helper para o template (evita erro de strict mode no HTML)
+  isProdutoInativo(code: string | null | undefined): boolean {
+    return code != null && code.includes('[INATIVO]');
+  }
+
+  // ➕ Navegar para criação
   goToCreate(): void {
     this.router.navigate(['/products/new']);
   }
 
-  // ✏️ (Opcional) Editar produto - pode implementar depois
-  editProduct(product: Product): void {
-    this.router.navigate(['/products/edit', product.id]);
+  // 🗑️ Soft delete: confirma e inativa
+  confirmDelete(product: Product): void {
+    if (confirm(`Deseja realmente inativar "${product.description}"?`)) {
+      this.stockService.deleteProduct(product.id).subscribe({
+        next: () => {
+          this.snackBar.open('Produto inativado.', 'Fechar', { duration: 2500 });
+          this.loadProducts(); // Recarrega a lista
+        },
+        error: () => {
+          this.snackBar.open('Erro ao inativar produto.', 'Fechar', { duration: 4000 });
+        }
+      });
+    }
   }
 }

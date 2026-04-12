@@ -3,28 +3,64 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
 import { Product } from '../../shared/models/product.model';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class StockService {
   private http = inject(HttpClient);
-  private apiUrl = 'https://localhost:5001/api/products';
+  private apiUrl = 'http://localhost:5083/api/products';
 
   getProducts(): Observable<Product[]> {
-    // RxJS: Observable + catchError
     return this.http.get<Product[]>(this.apiUrl).pipe(
-      catchError(error => {
-        console.error('Erro ao buscar produtos:', error);
+      catchError(err => {
+        console.error('Erro ao buscar produtos:', err);
         return throwError(() => new Error('Falha na comunicação com o serviço de estoque'));
       })
     );
   }
 
-  createProduct(product: Omit<Product, 'id'>): Observable<Product> {
-    return this.http.post<Product>(this.apiUrl, product);
+  // ✅ NOVO: Buscar por ID
+  getProductById(id: number): Observable<Product> {
+    return this.http.get<Product>(`${this.apiUrl}/${id}`).pipe(
+      catchError(err => {
+        console.error('Erro ao buscar produto:', err);
+        return throwError(() => new Error('Produto não encontrado'));
+      })
+    );
   }
 
-  updateStock(id: number, newBalance: number): Observable<void> {
-    return this.http.put<void>(`${this.apiUrl}/${id}`, newBalance);
+  createProduct(product: Omit<Product, 'id'>): Observable<any> {
+    return this.http.post<any>(this.apiUrl, product).pipe(
+      catchError(err => {
+        console.error('Erro ao criar produto:', err);
+        return throwError(() => new Error('Erro ao criar produto'));
+      })
+    );
+  }
+
+  updateProduct(id: number, product: Partial<Product>): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${id}`, product).pipe(
+      catchError(err => {
+        console.error('Erro ao atualizar produto:', err);
+        return throwError(() => new Error('Erro ao atualizar produto'));
+      })
+    );
+  }
+
+  // ✅ NOVO: Soft delete
+  deleteProduct(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+      catchError(err => {
+        console.error('Erro ao excluir produto:', err);
+        return throwError(() => new Error('Erro ao excluir produto'));
+      })
+    );
+  }
+
+  deductStock(id: number, quantity: number): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${id}/deduct`, quantity).pipe(
+      catchError(err => {
+        console.error('Erro ao debitar estoque:', err);
+        return throwError(() => new Error('Erro ao debitar estoque'));
+      })
+    );
   }
 }
