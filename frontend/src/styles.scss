@@ -1,31 +1,71 @@
-// Global styles for Korp application
-// Material CSS variables will be auto-injected by Angular
-
-html {
-  height: 100%;
+/* src/styles.scss */
+:root {
+  --primary: #1976D2;
+  --primary-hover: #1565C0;
+  --bg-page: #f5f7fa;
+  --bg-card: #ffffff;
+  --text-main: #1a1a1a;
+  --text-muted: #6c757d;
+  --border: #e9ecef;
+  --shadow: 0 2px 10px rgba(0,0,0,0.06);
+  --radius: 12px;
 }
 
 body {
-  color-scheme: light;
-  background-color: var(--mdc-theme-surface, #fafafa);
-  color: var(--mdc-theme-on-surface, #1f1f1f);
-  font-family: Roboto, sans-serif;
+  background-color: var(--bg-page);
   margin: 0;
-  height: 100%;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* Global Material Icons */
-.material-icons {
-  font-family: 'Material Icons';
-  font-weight: normal;
-  font-style: normal;
-  font-size: 24px;
-  display: inline-block;
-  line-height: 1;
-  text-transform: none;
-  letter-spacing: normal;
-  word-wrap: normal;
-  white-space: nowrap;
-  direction: ltr;
+.page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.page-header {
+  margin-bottom: 24px;
+  h1 {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--text-main);
+    margin: 0 0 8px 0;
+  }
+  p {
+    color: var(--text-muted);
+    margin: 0;
+    font-size: 15px;
+  }
+}
+
+.content-card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+  &:hover { background: var(--primary-hover); }
+}
+
+.btn-secondary {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
 }
 

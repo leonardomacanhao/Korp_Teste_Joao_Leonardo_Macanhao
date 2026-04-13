@@ -1,0 +1,118 @@
+<div class="il-page">
+  
+  <!-- Cabeçalho da Página -->
+  <div class="il-header">
+    <div class="il-header__left">
+      <div class="il-header__icon">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M5 3h7.586L17 7.414V17a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          <path d="M12 3v5h5M7 10h6M7 13h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="il-header__text">
+        <h1 class="il-header__title">📄 Notas Fiscais</h1>
+        <p class="il-header__subtitle">Crie e acompanhe o status das emissões</p>
+      </div>
+    </div>
+
+    <!-- Botão Nova NF - Estilo Fluent -->
+    <button class="il-btn il-btn--primary" routerLink="/invoices/new">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right:6px">
+        <path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      Nova NF
+    </button>
+  </div>
+
+  <!-- Card de Conteúdo -->
+  <div class="il-card">
+    
+    <!-- Loading -->
+    <div *ngIf="loading" class="il-loading">
+      <div class="il-loading__track"><div class="il-loading__fill"></div></div>
+      <span class="il-loading__label">Carregando notas fiscais...</span>
+    </div>
+
+    <!-- Tabela de Notas -->
+    <div class="il-table-wrapper" *ngIf="!loading">
+      <table mat-table [dataSource]="dataSource" class="il-table">
+        
+        <!-- Número -->
+        <ng-container matColumnDef="number">
+          <th mat-header-cell *matHeaderCellDef> Número </th>
+          <td mat-cell *matCellDef="let inv"> 
+            <span class="il-code">{{ inv.number }}</span>
+          </td>
+        </ng-container>
+
+        <!-- Data -->
+        <ng-container matColumnDef="createdAt">
+          <th mat-header-cell *matHeaderCellDef> Emissão </th>
+          <td mat-cell *matCellDef="let inv"> 
+            {{ inv.createdAt | date:'dd/MM/yyyy HH:mm' }} 
+          </td>
+        </ng-container>
+
+        <!-- Status -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef> Status </th>
+          <td mat-cell *matCellDef="let inv">
+            <span class="il-status" [class.il-status--aberta]="inv.status === 'Aberta'" [class.il-status--fechada]="inv.status === 'Fechada'">
+              {{ inv.status }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Ações -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef> Ações </th>
+          <td mat-cell *matCellDef="let inv">
+            <div class="il-actions">
+              
+              <!-- Botão Imprimir -->
+              <button class="il-btn il-btn--primary il-btn--small" 
+                      (click)="printInvoice(inv)"
+                      [disabled]="inv.status === 'Fechada' || loading">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" style="margin-right:4px">
+                  <path d="M6 2h4M4 6h8v6H4zM3 10h2M11 10h2M6 14h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                {{ inv.status === 'Fechada' ? 'Impresso' : 'Imprimir' }}
+              </button>
+              
+           <!-- Botão Excluir: LIXEIRA moderna (estilo Flaticon) 🔴 -->
+<button class="il-btn il-btn--danger il-btn--icon" 
+        (click)="deleteInvoice(inv)"
+        *ngIf="inv.status === 'Aberta'"
+        title="Excluir nota">
+  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:18px;height:18px">
+    <path d="M3 6H5H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6" 
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M10 11V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M14 11V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</button>
+              
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+
+    <!-- Estado Vazio -->
+    <div *ngIf="!loading && dataSource.data.length === 0" class="il-empty">
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style="margin-bottom:12px;color:#A19F9D">
+        <path d="M5 3h7.586L17 7.414V17a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+        <path d="M12 3v5h5M19 23H9M19 29H9M19 35h-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <p class="il-empty__text">Nenhuma nota fiscal cadastrada ainda.</p>
+      <button class="il-btn il-btn--primary" routerLink="/invoices/new">
+        Criar primeira NF
+      </button>
+    </div>
+
+  </div>
+</div>

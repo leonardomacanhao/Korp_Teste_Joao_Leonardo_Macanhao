@@ -3,7 +3,6 @@ using StockService.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ✅ 1. CORS - LIBERAR ANGULAR
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", policy =>
@@ -12,7 +11,6 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader());
 });
 
-// ✅ 2. Banco de Dados (SQLite)
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -28,16 +26,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// ✅ 3. HTTP (não HTTPS) para desenvolvimento
 app.UseRouting();
 
-// ✅ 4. CORS DEVE VIR DEPOIS DE UseRouting E ANTES DE UseAuthorization
 app.UseCors("AllowAngular");
 
 app.UseAuthorization();
 app.MapControllers();
 
-// ✅ 5. Forçar URL HTTP
 app.Urls.Add("http://localhost:5083");
 
 app.Run();

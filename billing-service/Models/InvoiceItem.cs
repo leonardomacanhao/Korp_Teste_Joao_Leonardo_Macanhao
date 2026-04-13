@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
 namespace BillingService.Models;
-
 public class InvoiceItem
 {
     [Key]

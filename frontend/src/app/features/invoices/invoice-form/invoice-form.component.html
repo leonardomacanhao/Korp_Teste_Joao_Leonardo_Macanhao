@@ -1,0 +1,158 @@
+<div class="nf-page">
+
+  <!-- Header -->
+  <div class="nf-header">
+    <div class="nf-header__icon">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5 3h7.586L17 7.414V17a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+        <path d="M12 3v5h5M7 10h6M7 13h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="nf-header__text">
+      <h1 class="nf-header__title">Nova Nota Fiscal</h1>
+      <p class="nf-header__subtitle">Adicione os produtos que compõem esta nota</p>
+    </div>
+  </div>
+
+  <!-- Card principal -->
+  <div class="nf-card">
+
+    <!-- Loading overlay de produtos -->
+    <div class="nf-loading-bar" *ngIf="loadingProducts">
+      <div class="nf-loading-bar__track">
+        <div class="nf-loading-bar__fill"></div>
+      </div>
+      <span class="nf-loading-bar__label">Carregando produtos...</span>
+    </div>
+
+    <form [formGroup]="invoiceForm" autocomplete="off">
+
+      <!-- Tabela de itens -->
+      <div class="nf-items-section">
+        <div class="nf-items-header">
+          <span class="nf-items-header__label">Itens da Nota</span>
+          <span class="nf-items-header__count">{{ items.length }} {{ items.length === 1 ? 'item' : 'itens' }}</span>
+        </div>
+
+        <div class="nf-items-list" formArrayName="items">
+
+          <div
+            *ngFor="let item of items.controls; let i = index"
+            [formGroupName]="i"
+            class="nf-item"
+            [class.nf-item--invalid]="item.invalid && item.touched">
+
+            <!-- Índice -->
+            <div class="nf-item__index">
+              <span>{{ i + 1 }}</span>
+            </div>
+
+            <!-- Campos -->
+            <div class="nf-item__fields">
+
+              <!-- Produto -->
+              <div class="nf-field nf-field--product">
+                <label class="nf-field__label" [class.nf-field__label--error]="item.get('productId')?.invalid && item.get('productId')?.touched">
+                  Produto
+                  <span class="nf-field__required">*</span>
+                </label>
+                <div class="nf-select-wrapper" [class.nf-select-wrapper--disabled]="loadingProducts" [class.nf-select-wrapper--error]="item.get('productId')?.invalid && item.get('productId')?.touched">
+                  <select
+                    class="nf-select"
+                    formControlName="productId"
+                    [disabled]="loadingProducts">
+                    <option value="" disabled selected>{{ loadingProducts ? 'Carregando...' : 'Selecione um produto' }}</option>
+                    <option *ngFor="let p of products" [value]="p.id">
+                      {{ p.code }} — {{ p.description }} ({{ p.stockBalance }} em estoque)
+                    </option>
+                  </select>
+                  <svg class="nf-select-wrapper__chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <span class="nf-field__error" *ngIf="item.get('productId')?.hasError('required') && item.get('productId')?.touched">
+                  Selecione um produto
+                </span>
+              </div>
+
+              <!-- Quantidade -->
+              <div class="nf-field nf-field--qty">
+                <label class="nf-field__label" [class.nf-field__label--error]="item.get('quantity')?.invalid && item.get('quantity')?.touched">
+                  Quantidade
+                  <span class="nf-field__required">*</span>
+                </label>
+                <input
+                  class="nf-input"
+                  [class.nf-input--error]="item.get('quantity')?.invalid && item.get('quantity')?.touched"
+                  type="number"
+                  formControlName="quantity"
+                  min="1"
+                  placeholder="1">
+                <span class="nf-field__error" *ngIf="item.get('quantity')?.hasError('required') && item.get('quantity')?.touched">
+                  Obrigatório
+                </span>
+                <span class="nf-field__error" *ngIf="item.get('quantity')?.hasError('min') && item.get('quantity')?.touched">
+                  Mínimo: 1
+                </span>
+              </div>
+
+            </div>
+
+            <!-- Remover -->
+            <button
+              class="nf-item__remove"
+              type="button"
+              (click)="removeItem(i)"
+              [disabled]="items.length === 1"
+              [title]="items.length === 1 ? 'Mínimo de 1 item' : 'Remover item'"
+              aria-label="Remover item">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M12 4L4 12M4 4l8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </button>
+
+          </div>
+
+        </div>
+
+        <!-- Botão adicionar -->
+        <button
+          class="nf-btn-add"
+          type="button"
+          (click)="addItem()"
+          [disabled]="loading || loadingProducts">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          Adicionar produto
+        </button>
+
+      </div>
+
+      <!-- Rodapé do formulário -->
+      <div class="nf-form-footer">
+        <button
+          class="nf-btn nf-btn--ghost"
+          type="button"
+          (click)="onCancel()"
+          [disabled]="loading">
+          Cancelar
+        </button>
+
+        <button
+          class="nf-btn nf-btn--primary"
+          type="button"
+          (click)="onSubmit()"
+          [disabled]="invoiceForm.invalid || loading || loadingProducts">
+          <span class="nf-btn__spinner" *ngIf="loading"></span>
+          <svg *ngIf="!loading" width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M13.5 4.5l-7 7L3 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          {{ loading ? 'Criando nota...' : 'Criar Nota Fiscal' }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+</div>

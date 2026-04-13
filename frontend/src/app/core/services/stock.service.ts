@@ -17,7 +17,6 @@ export class StockService {
     );
   }
 
-  // ✅ NOVO: Buscar por ID
   getProductById(id: number): Observable<Product> {
     return this.http.get<Product>(`${this.apiUrl}/${id}`).pipe(
       catchError(err => {
@@ -45,7 +44,6 @@ export class StockService {
     );
   }
 
-  // ✅ NOVO: Soft delete
   deleteProduct(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
       catchError(err => {

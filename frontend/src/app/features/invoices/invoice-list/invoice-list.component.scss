@@ -26,9 +26,10 @@ $radius-lg: 12px;
 $shadow-card: 0 2px 12px rgba(0,0,0,0.08);
 
 $font-stack: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+
 $transition: all 0.18s ease;
 
-.pl-page {
+.il-page {
   max-width: 1200px;
   margin: 0 auto;
   padding: 32px 20px;
@@ -37,7 +38,7 @@ $transition: all 0.18s ease;
   background: #f5f7fa;
 }
 
-.pl-header {
+.il-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -74,7 +75,7 @@ $transition: all 0.18s ease;
   }
 }
 
-.pl-card {
+.il-card {
   background: $neutral-0;
   border: 1px solid $neutral-200;
   border-radius: $radius-lg;
@@ -83,7 +84,7 @@ $transition: all 0.18s ease;
   position: static;
 }
 
-.pl-loading {
+.il-loading {
   padding: 10px 24px 14px;
   border-bottom: 1px solid $neutral-200;
   background: $fluent-blue-light;
@@ -112,19 +113,9 @@ $transition: all 0.18s ease;
   100% { transform: translateX(350%); width: 40%; }
 }
 
-.pl-error {
-  display: flex; align-items: center; gap: 8px;
-  padding: 12px 16px;
-  background: $danger-bg; color: $danger;
-  border-radius: $radius-md;
-  margin-bottom: 20px;
-  font-size: 13px;
-  font-weight: 400;
-}
+.il-table-wrapper { overflow-x: auto; }
 
-.pl-table-wrapper { overflow-x: auto; }
-
-.pl-table {
+.il-table {
   width: 100%;
   background: transparent !important;
   box-shadow: none !important;
@@ -157,7 +148,7 @@ $transition: all 0.18s ease;
   tr:last-child td { border-bottom: none !important; }
 }
 
-.pl-code {
+.il-code {
   font-weight: 400;
   color: $neutral-900;
   background: $neutral-50;
@@ -166,60 +157,32 @@ $transition: all 0.18s ease;
   font-size: 13px;
 }
 
-.pl-stock {
+.il-status {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
   font-weight: 400;
-  &--low { color: $danger; font-weight: 500; }
+
+  &--aberta {
+    background: $warning-bg;
+    color: #856404;
+  }
+
+  &--fechada {
+    background: $success-bg;
+    color: $success-text;
+  }
 }
 
-.pl-actions {
-  display: inline-flex;
+// Ações na tabela
+.il-actions {
+  display: flex;
   align-items: center;
   gap: 8px;
-  padding: 4px;
 }
 
-.pl-action-btn {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: 36px !important;
-  height: 36px !important;
-  padding: 0 !important;
-  border: 1px solid transparent !important;
-  border-radius: $radius-md !important;
-  background: transparent !important;
-  color: $neutral-600 !important;
-  cursor: pointer !important;
-  transition: $transition !important;
-  outline: none !important;
-
-  svg {
-    width: 18px !important;
-    height: 18px !important;
-    stroke-width: 2 !important;
-    stroke-linecap: round !important;
-    stroke-linejoin: round !important;
-  }
-
-  &--edit:hover:not(:disabled) {
-    background: $fluent-blue-light !important;
-    color: $fluent-blue !important;
-    border-color: rgba($fluent-blue, 0.3) !important;
-  }
-
-  &--delete:hover:not(:disabled) {
-    background: $danger-bg !important;
-    color: $danger !important;
-    border-color: rgba($danger, 0.3) !important;
-  }
-
-  &:disabled {
-    opacity: 0.3 !important;
-    cursor: not-allowed !important;
-  }
-}
-
-.pl-btn {
+.il-btn {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -257,6 +220,8 @@ $transition: all 0.18s ease;
     background: transparent !important;
     color: $neutral-700 !important;
     border-color: $neutral-300 !important;
+    padding: 0 12px !important;
+    width: 36px !important;
     &:hover:not(:disabled) {
       background: $neutral-100 !important;
       border-color: $neutral-400 !important;
@@ -288,7 +253,18 @@ $transition: all 0.18s ease;
   }
 }
 
-.pl-empty {
+button.mat-icon-button {
+  width: 36px !important;
+  height: 36px !important;
+  
+  mat-icon {
+    font-size: 18px !important;
+    width: 18px !important;
+    height: 18px !important;
+  }
+}
+
+.il-empty {
   padding: 60px 24px;
   text-align: center;
   color: $neutral-600;
@@ -296,36 +272,62 @@ $transition: all 0.18s ease;
   &__text {
     margin: 0 0 20px 0;
     font-size: 15px;
-    font-weight: 400;
+    font-weight: 400; // ✅ Sem negrito
   }
 }
 
 @media (max-width: 768px) {
-  .pl-page { padding: 20px 12px; }
+  .il-page { padding: 20px 12px; }
   
-  .pl-header {
+  .il-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
     
-    .pl-btn--primary {
+    .il-btn--primary {
       width: 100% !important;
       justify-content: center !important;
     }
   }
 
-  .pl-table th,
-  .pl-table td {
+  .il-table th,
+  .il-table td {
     padding: 12px 16px !important;
     font-size: 13px !important;
   }
 
-  .pl-actions {
+  .il-actions {
+    flex-direction: column;
+    align-items: flex-start;
     gap: 8px;
     
-    .pl-action-btn {
-      width: 36px !important;
-      height: 36px !important;
-    }
+    .il-btn { width: 100% !important; }
   }
+
+.il-btn--danger.il-btn--icon {
+  svg {
+    width: 18px !important;
+    height: 18px !important;
+    stroke-width: 2 !important;
+    stroke-linecap: round !important;
+    stroke-linejoin: round !important;
+  }
+  
+  &:hover:not(:disabled) {
+    background: $danger-bg !important;
+    color: $danger !important;
+    border-color: rgba($danger, 0.3) !important;
+  }
+  
+  &:disabled {
+    opacity: 0.3 !important;
+    cursor: not-allowed !important;
+  }
+}
+
+.il-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 }

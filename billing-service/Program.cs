@@ -3,18 +3,9 @@ using BillingService.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ✅ Configuração do SQLite
-builder.Services.AddDbContext<BillingDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-// ... resto do código (HttpClient, CORS, etc)
-builder.Services.AddDbContext<BillingDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-builder.Services.AddHttpClient("StockService", client =>
-{
-    client.BaseAddress = new Uri(builder.Configuration["ServiceUrls:StockService"]);
-});
+builder.Services.AddControllers(); // ← ESSENCIAL: Habilita os Controllers
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(options =>
 {
@@ -24,9 +15,13 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader());
 });
 
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddDbContext<BillingDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddHttpClient("StockService", client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5083");
+});
 
 var app = builder.Build();
 
@@ -36,9 +31,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+app.UseRouting();
+
 app.UseCors("AllowAngular");
+
 app.UseAuthorization();
+
 app.MapControllers();
+
+app.Urls.Clear();
+app.Urls.Add("http://localhost:5002");
 
 app.Run();

@@ -1,32 +1,42 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
-import { Invoice } from '../../shared/models/invoice.model';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class BillingService {
   private http = inject(HttpClient);
-  private apiUrl = 'https://localhost:5002/api/invoices';
+  private apiUrl = 'http://localhost:5002/api/invoices';
 
-  getInvoices(): Observable<Invoice[]> {
-    return this.http.get<Invoice[]>(this.apiUrl).pipe(
-      catchError(error => {
-        console.error('Erro ao buscar notas:', error);
-        return throwError(() => new Error('Falha na comunicação com o serviço de faturamento'));
-      })
+  getInvoices(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl).pipe(
+      catchError(err => throwError(() => new Error('Falha ao carregar notas fiscais')))
     );
   }
 
-  createInvoice(productIds: number[]): Observable<Invoice> {
-    return this.http.post<Invoice>(this.apiUrl, productIds);
+  createInvoice(items: any[]): Observable<any> {
+    return this.http.post<any>(this.apiUrl, items).pipe(
+      catchError(err => throwError(() => new Error('Erro ao criar nota fiscal')))
+    );
   }
 
-  printInvoice(id: number): Observable<{ message: string; invoice: Invoice }> {
-    return this.http.post<{ message: string; invoice: Invoice }>(
-      `${this.apiUrl}/${id}/print`, 
-      {}
+deleteInvoice(id: number): Observable<void> {
+  return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+    catchError((err: any) => {
+      console.error('❌ Erro ao excluir NF:', err);
+      const msg = err.error?.message || 'Erro ao excluir nota fiscal';
+      return throwError(() => new Error(msg));
+    })
+  );
+}
+
+  printInvoice(id: number): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/${id}/print`, {}).pipe(
+      catchError(err => {
+        const msg = err.status === 502 
+          ? '❌ Falha na integração com estoque. Verifique se o Stock Service está rodando.' 
+          : 'Erro ao imprimir nota.';
+        return throwError(() => new Error(msg));
+      })
     );
   }
 }

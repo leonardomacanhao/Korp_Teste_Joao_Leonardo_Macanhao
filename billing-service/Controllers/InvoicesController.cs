@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BillingService.Data;
 using BillingService.Models;
-using System.Text.Json;
 
 namespace BillingService.Controllers;
 
@@ -11,95 +10,147 @@ namespace BillingService.Controllers;
 public class InvoicesController : ControllerBase
 {
     private readonly BillingDbContext _context;
-    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IHttpClientFactory _clientFactory;
 
-    public InvoicesController(BillingDbContext context, IHttpClientFactory httpClientFactory)
+    public InvoicesController(BillingDbContext context, IHttpClientFactory clientFactory)
     {
         _context = context;
-        _httpClientFactory = httpClientFactory;
+        _clientFactory = clientFactory;
     }
 
-    // Listar todas as notas
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Invoice>>> GetInvoices()
     {
-        return await _context.Invoices
-                             .Include(i => i.Items)
-                             .ToListAsync();
+        var invoices = await _context.Invoices
+            .Include(i => i.Items)
+            .ToListAsync();
+        return Ok(invoices);
     }
 
-    // Criar nova nota
-    [HttpPost]
-    public async Task<ActionResult<Invoice>> CreateInvoice([FromBody] List<int> productIdsWithQty)
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Invoice>> GetInvoice(int id)
     {
-        if (productIdsWithQty == null || productIdsWithQty.Count == 0)
-            return BadRequest("Informe os IDs dos produtos e quantidades.");
+        var invoice = await _context.Invoices
+            .Include(i => i.Items)
+            .FirstOrDefaultAsync(i => i.Id == id);
+        
+        if (invoice == null) return NotFound();
+        return Ok(invoice);
+    }
 
-        var lastInvoice = await _context.Invoices.OrderByDescending(i => i.Id).FirstOrDefaultAsync();
-        var nextNumber = $"NF-{(lastInvoice?.Id + 1):D4}";
+    [HttpPost]
+    public async Task<ActionResult<Invoice>> CreateInvoice([FromBody] List<InvoiceItem> items)
+    {
+        if (items == null || items.Count == 0)
+            return BadRequest(new { message = "A nota deve ter pelo menos um item." });
+
+        var count = await _context.Invoices.CountAsync();
+        var newNumber = $"NF-{(count + 1).ToString("D4")}";
 
         var invoice = new Invoice
         {
-            Number = nextNumber,
+            Number = newNumber,
             Status = "Aberta",
-            Items = productIdsWithQty.Select(pid => new InvoiceItem { ProductId = pid, Quantity = 1 }).ToList()
+            CreatedAt = DateTime.Now,
+            Items = items
         };
 
         _context.Invoices.Add(invoice);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(GetInvoices), new { id = invoice.Id }, invoice);
+        var created = await _context.Invoices
+            .Include(i => i.Items)
+            .FirstAsync(i => i.Id == invoice.Id);
+
+        return CreatedAtAction(nameof(GetInvoices), new { id = created.Id }, created);
     }
 
-    // Imprimir/Finalizar nota fiscal
     [HttpPost("{id}/print")]
-    public async Task<ActionResult<Invoice>> PrintInvoice(int id)
+    public async Task<IActionResult> PrintInvoice(int id)
     {
         var invoice = await _context.Invoices
-                                    .Include(i => i.Items)
-                                    .FirstOrDefaultAsync(i => i.Id == id);
+            .Include(i => i.Items)
+            .FirstOrDefaultAsync(i => i.Id == id);
 
-        if (invoice == null)
-            return NotFound("Nota fiscal não encontrada.");
-
-        if (invoice.Status == "Fechada")
-            return BadRequest("Nota fiscal já foi fechada.");
-
-        if (invoice.Status != "Aberta")
-            return BadRequest($"Nota fiscal em status inválido: {invoice.Status}");
+        if (invoice == null) return NotFound();
+        if (invoice.Status == "Fechada") return BadRequest(new { message = "Nota já fechada." });
 
         try
         {
-            // Deduzir estoque no stock-service para cada item
-            var client = _httpClientFactory.CreateClient();
-            client.BaseAddress = new Uri("https://localhost:7192"); // URL do stock-service
+            var client = _clientFactory.CreateClient("StockService");
 
             foreach (var item in invoice.Items)
             {
-                var deductUrl = $"/api/products/{item.ProductId}/deduct";
-                var content = new StringContent(
-                    JsonSerializer.Serialize(item.Quantity),
-                    System.Text.Encoding.UTF8,
-                    "application/json");
-
-                var response = await client.PutAsync(deductUrl, content);
+                var response = await client.PutAsJsonAsync(
+                    $"/api/products/{item.ProductId}/deduct", 
+                    item.Quantity
+                );
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    return StatusCode(502, "Erro ao deduzir estoque do produto. Stock-Service indisponível.");
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    throw new Exception($"Produto {item.ProductId}: {response.StatusCode} - {errorContent}");
                 }
             }
 
-            // Atualizar status da nota para "Fechada"
             invoice.Status = "Fechada";
-            _context.Invoices.Update(invoice);
             await _context.SaveChangesAsync();
 
-            return Ok(invoice);
+            return Ok(new { message = "Nota impressa e estoque atualizado!", invoice });
         }
-        catch (HttpRequestException)
+        catch (HttpRequestException ex)
         {
-            return StatusCode(502, "Serviço de Estoque indisponível. A nota permanece Aberta.");
+            Console.WriteLine($"[ERRO REDE] {ex.Message}");
+            return StatusCode(502, new { 
+                error = "Falha na comunicação com o serviço de estoque.",
+                details = "Verifique se o Stock Service está rodando."
+            });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[ERRO GERAL] {ex.Message}");
+            return StatusCode(500, new { error = "Erro ao processar nota.", details = ex.Message });
+        }
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteInvoice(int id)
+    {
+        Console.WriteLine($"[DELETE] Tentando excluir NF ID: {id}");
+        
+        var invoice = await _context.Invoices
+            .Include(i => i.Items)
+            .FirstOrDefaultAsync(i => i.Id == id);
+
+        if (invoice == null) 
+        {
+            Console.WriteLine($"[DELETE] NF {id} não encontrada.");
+            return NotFound(new { message = "Nota não encontrada." });
+        }
+        
+        if (invoice.Status == "Fechada")
+        {
+            Console.WriteLine($"[DELETE] NF {id} está fechada. Bloqueado.");
+            return BadRequest(new { message = "Não é possível excluir uma nota já fechada/impressa." });
+        }
+
+        try
+        {
+            if (invoice.Items.Any())
+            {
+                _context.InvoiceItems.RemoveRange(invoice.Items);
+            }
+            
+            _context.Invoices.Remove(invoice);
+            await _context.SaveChangesAsync();
+            
+            Console.WriteLine($"[DELETE] NF {id} excluída com sucesso.");
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[DELETE] ERRO CRÍTICO: {ex.Message}");
+            return StatusCode(500, new { message = "Erro interno ao excluir nota.", details = ex.Message });
         }
     }
 }

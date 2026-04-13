@@ -4,7 +4,6 @@ import { catchError, throwError } from 'rxjs';
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError(error => {
-      // Tratamento centralizado de erros
       let errorMessage = 'Ocorreu um erro inesperado';
 
       if (error.status === 0) {
@@ -16,7 +15,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       }
 
       console.error('Erro HTTP:', error);
-      alert(errorMessage); // Feedback visual simples (pode ser melhorado com MatSnackBar)
+      alert(errorMessage);
 
       return throwError(() => error);
     })

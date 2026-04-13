@@ -1,0 +1,113 @@
+<div class="pf-page">
+
+  <!-- Header -->
+  <div class="pf-header">
+    <div class="pf-header__icon">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path d="M4 4h12v12H4z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+        <path d="M7 7h6M7 10h4M7 13h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="pf-header__text">
+      <h1 class="pf-header__title">{{ isEdit ? '✏️ Editar Produto' : '➕ Novo Produto' }}</h1>
+      <p class="pf-header__subtitle">Preencha os dados abaixo</p>
+    </div>
+  </div>
+
+  <!-- Card principal -->
+  <div class="pf-card">
+
+    <!-- Loading ao carregar dados para edição -->
+    <div class="pf-loading" *ngIf="carregandoDados">
+      <div class="pf-loading__track"><div class="pf-loading__fill"></div></div>
+      <span class="pf-loading__label">Carregando dados...</span>
+    </div>
+
+    <!-- Erro ao carregar -->
+    <div class="pf-error" *ngIf="erroCarregamento">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M8 4v5M8 12h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <span>{{ erroCarregamento }}</span>
+    </div>
+
+    <!-- Formulário -->
+    <form [formGroup]="productForm" (ngSubmit)="onSubmit($event)">
+
+      <!-- Código -->
+      <div class="pf-field">
+        <label class="pf-field__label">Código <span class="pf-field__required">*</span></label>
+        <input 
+          class="pf-input" 
+          [class.pf-input--error]="f['code'].invalid && f['code'].touched"
+          type="text" 
+          formControlName="code" 
+          placeholder="Ex: PROD001"
+          maxlength="20">
+        <span class="pf-field__error" *ngIf="f['code'].hasError('required') && f['code'].touched">
+          Código é obrigatório
+        </span>
+        <span class="pf-field__error" *ngIf="f['code'].hasError('minlength') && f['code'].touched">
+          Mínimo de 3 caracteres
+        </span>
+      </div>
+
+      <!-- Descrição -->
+      <div class="pf-field">
+        <label class="pf-field__label">Descrição <span class="pf-field__required">*</span></label>
+        <input 
+          class="pf-input" 
+          [class.pf-input--error]="f['description'].invalid && f['description'].touched"
+          type="text" 
+          formControlName="description" 
+          placeholder="Ex: Notebook Dell"
+          maxlength="100">
+        <span class="pf-field__error" *ngIf="f['description'].hasError('required') && f['description'].touched">
+          Descrição é obrigatória
+        </span>
+        <span class="pf-field__error" *ngIf="f['description'].hasError('minlength') && f['description'].touched">
+          Mínimo de 5 caracteres
+        </span>
+      </div>
+
+      <!-- Saldo em Estoque -->
+      <div class="pf-field">
+        <label class="pf-field__label">Saldo em Estoque <span class="pf-field__required">*</span></label>
+        <input 
+          class="pf-input" 
+          [class.pf-input--error]="f['stockBalance'].invalid && f['stockBalance'].touched"
+          type="number" 
+          formControlName="stockBalance" 
+          placeholder="0"
+          min="0" 
+          max="999999">
+        <span class="pf-field__error" *ngIf="f['stockBalance'].hasError('required') && f['stockBalance'].touched">
+          Saldo é obrigatório
+        </span>
+        <span class="pf-field__error" *ngIf="f['stockBalance'].hasError('min') && f['stockBalance'].touched">
+          Não pode ser negativo
+        </span>
+      </div>
+
+      <!-- Ações -->
+      <div class="pf-actions">
+        <button 
+          class="pf-btn pf-btn--ghost" 
+          type="button" 
+          (click)="onCancel()" 
+          [disabled]="loading || carregandoDados">
+          ← Cancelar
+        </button>
+        <button 
+          class="pf-btn pf-btn--primary" 
+          type="submit" 
+          [disabled]="productForm.invalid || loading || carregandoDados">
+          <span class="pf-btn__spinner" *ngIf="loading"></span>
+          {{ loading ? 'Salvando...' : (isEdit ? 'Atualizar' : 'Salvar Produto') }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
