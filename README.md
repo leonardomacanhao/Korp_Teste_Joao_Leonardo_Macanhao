@@ -30,18 +30,6 @@ O frontend foi construído com **Angular Material** e um **Design System Fluent 
 ---
 
 ## 🏗️ Arquitetura
-┌─────────────────┐ HTTP/REST ┌─────────────────┐
-│ Stock Service │◄──────────────────────►│ Billing Service │
-│ (:5083) │ Débito de Estoque │ (:5002) │
-└─────────────────┘ ────────┬────────
-│
-┌──────▼──────┐
-│ Frontend │
-│ Angular 17 │
-│ (:4200) │
-└──────────────┘
-
-
 - **Stock Service**: Gerencia produtos, saldos e soft delete.
 - **Billing Service**: Gerencia notas fiscais, numeração sequencial e orquestra o débito no estoque.
 - **Frontend**: Interface reativa com validação rigorosa, tratamento de erros e UX profissional.
