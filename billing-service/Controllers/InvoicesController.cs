@@ -38,32 +38,32 @@ public class InvoicesController : ControllerBase
         return Ok(invoice);
     }
 
-    [HttpPost]
-    public async Task<ActionResult<Invoice>> CreateInvoice([FromBody] List<InvoiceItem> items)
+[HttpPost]
+public async Task<ActionResult<Invoice>> CreateInvoice([FromBody] List<InvoiceItem> items)
+{
+    if (items == null || items.Count == 0)
+        return BadRequest(new { message = "A nota deve ter pelo menos um item." });
+
+    var lastId = await _context.Invoices.MaxAsync(i => (int?)i.Id) ?? 0;
+    var newNumber = $"NF-{(lastId + 1).ToString("D4")}";
+
+    var invoice = new Invoice
     {
-        if (items == null || items.Count == 0)
-            return BadRequest(new { message = "A nota deve ter pelo menos um item." });
+        Number = newNumber,
+        Status = "Aberta",
+        CreatedAt = DateTime.Now,
+        Items = items
+    };
 
-        var count = await _context.Invoices.CountAsync();
-        var newNumber = $"NF-{(count + 1).ToString("D4")}";
+    _context.Invoices.Add(invoice);
+    await _context.SaveChangesAsync();
 
-        var invoice = new Invoice
-        {
-            Number = newNumber,
-            Status = "Aberta",
-            CreatedAt = DateTime.Now,
-            Items = items
-        };
+    var created = await _context.Invoices
+        .Include(i => i.Items)
+        .FirstAsync(i => i.Id == invoice.Id);
 
-        _context.Invoices.Add(invoice);
-        await _context.SaveChangesAsync();
-
-        var created = await _context.Invoices
-            .Include(i => i.Items)
-            .FirstAsync(i => i.Id == invoice.Id);
-
-        return CreatedAtAction(nameof(GetInvoices), new { id = created.Id }, created);
-    }
+    return CreatedAtAction(nameof(GetInvoices), new { id = created.Id }, created);
+}
 
     [HttpPost("{id}/print")]
     public async Task<IActionResult> PrintInvoice(int id)
