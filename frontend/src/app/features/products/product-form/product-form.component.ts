@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatIconModule } from '@angular/material/icon';
 import { StockService } from '../../../core/services/stock.service';
 
 @Component({
@@ -11,7 +12,8 @@ import { StockService } from '../../../core/services/stock.service';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatIconModule
   ],
   templateUrl: './product-form.component.html',
   styleUrl: './product-form.component.scss'
