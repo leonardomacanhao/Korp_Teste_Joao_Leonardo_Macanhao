@@ -120,6 +120,14 @@ $transition: all 0.18s ease;
   margin-bottom: 20px;
   font-size: 13px;
   font-weight: 400;
+
+  &__icon {
+    flex-shrink: 0;
+  }
+
+  &__retry {
+    margin-left: 12px;
+  }
 }
 
 .pl-table-wrapper { overflow-x: auto; }
@@ -292,6 +300,11 @@ $transition: all 0.18s ease;
   padding: 60px 24px;
   text-align: center;
   color: $neutral-600;
+
+  &__icon {
+    margin-bottom: 12px;
+    color: $neutral-400;
+  }
 
   &__text {
     margin: 0 0 20px 0;
