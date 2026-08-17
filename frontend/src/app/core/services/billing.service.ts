@@ -1,11 +1,12 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class BillingService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:5002/api/invoices';
+  private apiUrl = environment.api.billing;
 
   getInvoices(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrl).pipe(

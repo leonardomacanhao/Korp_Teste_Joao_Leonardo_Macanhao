@@ -1,12 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { Product } from '../../shared/models/product.model';
 
 @Injectable({ providedIn: 'root' })
 export class StockService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:5083/api/products';
+  private apiUrl = environment.api.stock;
 
   getProducts(): Observable<Product[]> {
     return this.http.get<Product[]>(this.apiUrl).pipe(
