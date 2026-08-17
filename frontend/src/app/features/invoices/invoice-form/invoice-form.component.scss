@@ -456,6 +456,12 @@ $transition-std:     all 0.18s ease;
   outline: none;
   white-space: nowrap;
 
+  mat-icon {
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+  }
+
   &:focus-visible {
     box-shadow: 0 0 0 2px $neutral-0, 0 0 0 4px $fluent-blue;
   }
