@@ -269,6 +269,11 @@ button.mat-icon-button {
   text-align: center;
   color: $neutral-600;
 
+  &__icon {
+    margin-bottom: 12px;
+    color: $neutral-400;
+  }
+
   &__text {
     margin: 0 0 20px 0;
     font-size: 15px;
