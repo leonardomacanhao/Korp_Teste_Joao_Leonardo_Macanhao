@@ -92,10 +92,7 @@
 
     <!-- Estado vazio -->
     <div *ngIf="dataSource.data.length === 0" class="pl-empty">
-      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" class="pl-empty__icon">
-        <rect x="8" y="12" width="32" height="28" rx="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
-        <path d="M16 20h16M16 26h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-      </svg>
+      <mat-icon class="pl-empty__icon">inventory_2</mat-icon>
       <p class="pl-empty__text">Nenhum produto ativo cadastrado.</p>
       <button class="pl-btn pl-btn--primary" routerLink="/products/new">Cadastrar primeiro produto</button>
     </div>
