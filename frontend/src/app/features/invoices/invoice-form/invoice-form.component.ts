@@ -8,6 +8,7 @@ import {
   Validators
 } from '@angular/forms';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { BillingService } from '../../../core/services/billing.service';
 import { StockService } from '../../../core/services/stock.service';
@@ -30,7 +31,8 @@ interface InvoiceItem {
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatIconModule
   ],
   templateUrl: './invoice-form.component.html',
   styleUrl: './invoice-form.component.scss'
