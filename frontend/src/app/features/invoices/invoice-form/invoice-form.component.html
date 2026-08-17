@@ -63,9 +63,7 @@
                       {{ p.code }} — {{ p.description }} ({{ p.stockBalance }} em estoque)
                     </option>
                   </select>
-                  <svg class="nf-select-wrapper__chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                    <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
+                  <mat-icon class="nf-select-wrapper__chevron">expand_more</mat-icon>
                 </div>
                 <span class="nf-field__error" *ngIf="item.get('productId')?.hasError('required') && item.get('productId')?.touched">
                   Selecione um produto

@@ -307,6 +307,9 @@ $transition-std:     all 0.18s ease;
   &__chevron {
     position: absolute;
     right: 10px;
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
     color: $neutral-400;
     pointer-events: none;
     flex-shrink: 0;
