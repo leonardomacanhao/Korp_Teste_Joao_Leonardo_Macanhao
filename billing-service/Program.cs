@@ -20,7 +20,8 @@ builder.Services.AddDbContext<BillingDbContext>(options =>
 
 builder.Services.AddHttpClient("StockService", client =>
 {
-    client.BaseAddress = new Uri("http://localhost:5083");
+    var stockUrl = builder.Configuration["ServiceUrls:StockService"] ?? "http://localhost:5083";
+    client.BaseAddress = new Uri(stockUrl);
 });
 
 var app = builder.Build();

@@ -43,19 +43,18 @@ public async Task<ActionResult<Invoice>> CreateInvoice([FromBody] List<InvoiceIt
 {
     if (items == null || items.Count == 0)
         return BadRequest(new { message = "A nota deve ter pelo menos um item." });
-
-    var lastId = await _context.Invoices.MaxAsync(i => (int?)i.Id) ?? 0;
-    var newNumber = $"NF-{(lastId + 1).ToString("D4")}";
-
     var invoice = new Invoice
     {
-        Number = newNumber,
         Status = "Aberta",
         CreatedAt = DateTime.Now,
         Items = items
     };
 
     _context.Invoices.Add(invoice);
+    await _context.SaveChangesAsync();
+
+    // Use the generated Id to produce a sequential number (safe with DB autoincrement)
+    invoice.Number = $"NF-{invoice.Id.ToString("D4")}";
     await _context.SaveChangesAsync();
 
     var created = await _context.Invoices
@@ -79,20 +78,27 @@ public async Task<ActionResult<Invoice>> CreateInvoice([FromBody] List<InvoiceIt
         {
             var client = _clientFactory.CreateClient("StockService");
 
-            foreach (var item in invoice.Items)
+            var operationId = Guid.NewGuid().ToString();
+            var payload = new
             {
-                var response = await client.PutAsJsonAsync(
-                    $"/api/products/{item.ProductId}/deduct", 
-                    item.Quantity
-                );
+                OperationId = operationId,
+                Items = invoice.Items.Select(i => new { ProductId = i.ProductId, Quantity = i.Quantity }).ToList()
+            };
 
-                if (!response.IsSuccessStatusCode)
+            var response = await client.PostAsJsonAsync("/api/products/deductions", payload);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                if ((int)response.StatusCode >= 500)
                 {
-                    var errorContent = await response.Content.ReadAsStringAsync();
-                    throw new Exception($"Produto {item.ProductId}: {response.StatusCode} - {errorContent}");
+                    return StatusCode(502, new { error = "Serviço de estoque indisponível.", details = await response.Content.ReadAsStringAsync() });
                 }
+
+                var err = await response.Content.ReadAsStringAsync();
+                return BadRequest(new { message = "Não foi possível debitar estoque.", details = err });
             }
 
+            // Apenas marcar como fechada após sucesso do débito atômico
             invoice.Status = "Fechada";
             await _context.SaveChangesAsync();
 
