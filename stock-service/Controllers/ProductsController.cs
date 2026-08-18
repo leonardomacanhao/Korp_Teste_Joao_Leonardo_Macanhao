@@ -16,7 +16,9 @@ public class ProductsController : ControllerBase
     // ✅ LISTAR TODOS (GET /api/products)
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
-        => await _context.Products.ToListAsync();
+        => await _context.Products
+            .Where(p => p.IsActive)
+            .ToListAsync();
 
     // ✅ BUSCAR POR ID (GET /api/products/{id}) ← ESSENCIAL PARA EDIÇÃO
     [HttpGet("{id}")]
@@ -70,9 +72,8 @@ public class ProductsController : ControllerBase
             return NotFound(new { message = "Produto não encontrado" });
         
         // Soft delete: marca como inativo ao invés de remover
-        product.Code = $"[INATIVO]_{product.Code}";
-        product.Description = $"[INATIVO] {product.Description}";
-        
+        product.IsActive = false;
+
         await _context.SaveChangesAsync();
         return NoContent();
     }
@@ -85,11 +86,75 @@ public class ProductsController : ControllerBase
         if (product == null) 
             return NotFound(new { message = "Produto não encontrado" });
         
+        if (!product.IsActive)
+            return BadRequest(new { message = "Produto inativo" });
+
+        if (quantity <= 0)
+            return BadRequest(new { message = "Quantidade inválida" });
+
         if (product.StockBalance < quantity) 
             return BadRequest(new { message = "Saldo insuficiente" });
 
         product.StockBalance -= quantity;
         await _context.SaveChangesAsync();
         return NoContent();
+    }
+
+    // DÉBITO ATÔMICO EM LOTE (idempotente)
+    [HttpPost("deductions")]
+    public async Task<IActionResult> DeductBatch([FromBody] StockDeductionRequest request)
+    {
+        if (request == null || string.IsNullOrWhiteSpace(request.OperationId) || request.Items == null || !request.Items.Any())
+            return BadRequest(new { message = "Requisição inválida" });
+
+        // Idempotency: se operação já foi processada, retornar sucesso sem fazer nada
+        var existingOp = await _context.StockOperations.FindAsync(request.OperationId);
+        if (existingOp != null)
+            return Ok(new { message = "Operação já processada" });
+
+        using var tx = await _context.Database.BeginTransactionAsync();
+
+        try
+        {
+            // Validate all items first
+            var productIds = request.Items.Select(i => i.ProductId).Distinct().ToList();
+            var products = await _context.Products.Where(p => productIds.Contains(p.Id)).ToListAsync();
+
+            foreach (var item in request.Items)
+            {
+                if (item.Quantity <= 0)
+                    return BadRequest(new { message = $"Quantidade inválida para produto {item.ProductId}" });
+
+                var product = products.FirstOrDefault(p => p.Id == item.ProductId);
+                if (product == null)
+                    return NotFound(new { message = $"Produto {item.ProductId} não encontrado" });
+
+                if (!product.IsActive)
+                    return BadRequest(new { message = $"Produto {item.ProductId} está inativo" });
+
+                if (product.StockBalance < item.Quantity)
+                    return BadRequest(new { message = $"Saldo insuficiente para produto {item.ProductId}" });
+            }
+
+            // Apply all debits
+            foreach (var item in request.Items)
+            {
+                var product = products.First(p => p.Id == item.ProductId);
+                product.StockBalance -= item.Quantity;
+            }
+
+            // Register operation for idempotency
+            _context.StockOperations.Add(new StockOperation { OperationId = request.OperationId, CreatedAt = DateTime.UtcNow });
+
+            await _context.SaveChangesAsync();
+            await tx.CommitAsync();
+            return Ok(new { message = "Deduções aplicadas com sucesso" });
+        }
+        catch (Exception ex)
+        {
+            await tx.RollbackAsync();
+            Console.WriteLine($"[ERROR] DeductBatch: {ex.Message}");
+            return StatusCode(500, new { message = "Erro ao processar débitos." });
+        }
     }
 }

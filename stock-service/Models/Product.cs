@@ -16,4 +16,11 @@ public class Product
     [Range(0, double.MaxValue)]
     public int StockBalance { get; set; }
     
+    // Explicit active flag instead of encoding state in the code string
+    public bool IsActive { get; set; } = true;
+
+    // Concurrency token to help with concurrent updates
+    [Timestamp]
+    public byte[]? RowVersion { get; set; }
+    
 }
