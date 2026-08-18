@@ -3,4 +3,6 @@ export interface Product {
   code: string;
   description: string;
   stockBalance: number;
+  isActive?: boolean;
+  rowVersion?: string | null;
 }

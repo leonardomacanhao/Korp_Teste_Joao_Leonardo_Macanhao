@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { StockService } from '../../../core/services/stock.service';
+import { Product } from '../../../shared/models/product.model';
 
 @Component({
   selector: 'app-product-form',
@@ -58,7 +59,7 @@ export class ProductFormComponent implements OnInit {
     this.carregandoDados = true;
     
     this.stockService.getProductById(id).subscribe({
-      next: (product: any) => {
+      next: (product: Product) => {
         this.productForm.patchValue({
           code: product.code,
           description: product.description,

@@ -13,12 +13,8 @@ import { Router } from '@angular/router';
 import { BillingService } from '../../../core/services/billing.service';
 import { StockService } from '../../../core/services/stock.service';
 
-interface Product {
-  id: number;
-  code: string;
-  description: string;
-  stockBalance: number;
-}
+import { Product } from '../../../shared/models/product.model';
+import { Invoice } from '../../../shared/models/invoice.model';
 
 interface InvoiceItem {
   productId: number;
@@ -86,7 +82,7 @@ export class InvoiceFormComponent implements OnInit {
   private loadProducts(): void {
     this.stockService.getProducts().subscribe({
       next: (data: Product[]) => {
-        this.products = data.filter((p) => !p.code?.includes('[INATIVO]'));
+        this.products = data.filter((p) => p.isActive !== false);
         this.loadingProducts = false;
       },
       error: () => {
@@ -122,7 +118,7 @@ export class InvoiceFormComponent implements OnInit {
     }));
 
     this.billingService.createInvoice(payload).subscribe({
-      next: (res: any) => {
+      next: (res: Invoice) => {
         this.snackBar.open(`NF ${res.number} criada com sucesso!`, 'Fechar', { duration: 3000 });
         setTimeout(() => this.router.navigate(['/invoices']), 1500);
       },

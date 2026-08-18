@@ -54,7 +54,7 @@ export class ProductListComponent implements OnInit {
       finalize(() => { this.loading = false; })
     ).subscribe({
       next: (products) => {
-        this.dataSource.data = products.filter(p => !p.code?.startsWith('[INATIVO]'));
+        this.dataSource.data = products.filter(p => p.isActive !== false);
       }
     });
   }

@@ -73,10 +73,10 @@
         <mat-icon>edit</mat-icon>
       </button>
       
-      <!-- Botão Excluir: Ícone de Lixeira (estilo Flaticon) -->
-      <button class="pl-action-btn pl-action-btn--delete" 
+            <!-- Botão Excluir: Ícone de Lixeira (estilo Flaticon) -->
+            <button class="pl-action-btn pl-action-btn--delete" 
               (click)="confirmDelete(product)" 
-              [disabled]="isProdutoInativo(product.code)" 
+              [disabled]="product.isActive === false" 
               title="Excluir produto">
         <mat-icon>delete</mat-icon>
       </button>

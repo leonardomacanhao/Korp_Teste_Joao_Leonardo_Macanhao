@@ -8,6 +8,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router, RouterLink } from '@angular/router';
 import { BillingService } from '../../../core/services/billing.service';
+import { Invoice } from '../../../shared/models/invoice.model';
 
 @Component({
   selector: 'app-invoice-list',
@@ -24,7 +25,7 @@ export class InvoiceListComponent implements OnInit {
   private snackBar = inject(MatSnackBar);
   private router = inject(Router);
 
-  dataSource = new MatTableDataSource<any>();
+  dataSource = new MatTableDataSource<Invoice>();
   displayedColumns = ['number', 'createdAt', 'status', 'actions'];
   loading = false;
 
@@ -33,7 +34,7 @@ export class InvoiceListComponent implements OnInit {
   loadInvoices(): void {
     this.loading = true;
     this.billingService.getInvoices().subscribe({
-      next: (data) => { this.dataSource.data = data; this.loading = false; },
+      next: (data: Invoice[]) => { this.dataSource.data = data; this.loading = false; },
       error: () => { 
         this.snackBar.open('Erro ao carregar NFs', 'Fechar', { duration: 3000 }); 
         this.loading = false; 
@@ -41,7 +42,7 @@ export class InvoiceListComponent implements OnInit {
     });
   }
 
-  printInvoice(invoice: any): void {
+  printInvoice(invoice: Invoice): void {
     if (invoice.status === 'Fechada') {
       this.snackBar.open('Esta nota já foi impressa/fechada.', 'Fechar', { duration: 3000 });
       return;
@@ -60,7 +61,7 @@ export class InvoiceListComponent implements OnInit {
     });
   }
 
-  deleteInvoice(invoice: any): void {
+  deleteInvoice(invoice: Invoice): void {
     if (invoice.status === 'Fechada') {
       this.snackBar.open('Não é possível excluir uma nota já fechada.', 'Fechar', { duration: 3000 });
       return;

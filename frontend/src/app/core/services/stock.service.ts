@@ -28,7 +28,7 @@ export class StockService {
   }
 
   createProduct(product: Omit<Product, 'id'>): Observable<any> {
-    return this.http.post<any>(this.apiUrl, product).pipe(
+    return this.http.post<Product>(this.apiUrl, product).pipe(
       catchError(err => {
         console.error('Erro ao criar produto:', err);
         return throwError(() => new Error('Erro ao criar produto'));
@@ -37,7 +37,7 @@ export class StockService {
   }
 
   updateProduct(id: number, product: Partial<Product>): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}`, product).pipe(
+    return this.http.put<Product>(`${this.apiUrl}/${id}`, product).pipe(
       catchError(err => {
         console.error('Erro ao atualizar produto:', err);
         return throwError(() => new Error('Erro ao atualizar produto'));

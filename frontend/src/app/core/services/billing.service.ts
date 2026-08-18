@@ -2,20 +2,21 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { Invoice, InvoiceItem } from '../../shared/models/invoice.model';
 
 @Injectable({ providedIn: 'root' })
 export class BillingService {
   private http = inject(HttpClient);
   private apiUrl = environment.api.billing;
 
-  getInvoices(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl).pipe(
+  getInvoices(): Observable<Invoice[]> {
+    return this.http.get<Invoice[]>(this.apiUrl).pipe(
       catchError(err => throwError(() => new Error('Falha ao carregar notas fiscais')))
     );
   }
 
-  createInvoice(items: any[]): Observable<any> {
-    return this.http.post<any>(this.apiUrl, items).pipe(
+  createInvoice(items: Array<{ productId: number; quantity: number }>): Observable<Invoice> {
+    return this.http.post<Invoice>(this.apiUrl, items).pipe(
       catchError(err => throwError(() => new Error('Erro ao criar nota fiscal')))
     );
   }
