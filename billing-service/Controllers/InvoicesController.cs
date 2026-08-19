@@ -78,7 +78,7 @@ public async Task<ActionResult<Invoice>> CreateInvoice([FromBody] List<InvoiceIt
         {
             var client = _clientFactory.CreateClient("StockService");
 
-            var operationId = Guid.NewGuid().ToString();
+            var operationId = $"billing-invoice-{invoice.Id}";
             var payload = new
             {
                 OperationId = operationId,
