@@ -108,14 +108,13 @@ public class ProductsController : ControllerBase
             return BadRequest(new { message = "Requisição inválida" });
 
         // Idempotency: se operação já foi processada, retornar sucesso sem fazer nada
-        var existingOp = await _context.StockOperations.FindAsync(request.OperationId);
-        if (existingOp != null)
-            return Ok(new { message = "Operação já processada" });
-
         using var tx = await _context.Database.BeginTransactionAsync();
 
         try
         {
+            var existingOp = await _context.StockOperations.FindAsync(request.OperationId);
+            if (existingOp != null)
+                return Ok(new { message = "Operação já processada" });
             var invalidItem = request.Items.FirstOrDefault(i => i.Quantity <= 0);
             if (invalidItem != null)
                 return BadRequest(new { message = $"Quantidade inválida para produto {invalidItem.ProductId}" });
