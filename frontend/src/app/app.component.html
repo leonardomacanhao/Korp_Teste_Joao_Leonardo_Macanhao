@@ -7,8 +7,14 @@
     <a routerLink="/products" routerLinkActive="active">Produtos</a>
     <a routerLink="/invoices" routerLinkActive="active">Notas Fiscais</a>
   </div>
-  
 </nav>
+
+<div class="navbar-actions">
+  <button class="theme-toggle" (click)="toggleTheme()" [attr.aria-pressed]="isDark">
+    <span *ngIf="!isDark">🌙</span>
+    <span *ngIf="isDark">☀️</span>
+  </button>
+</div>
 
 <div class="container">
   <router-outlet></router-outlet>

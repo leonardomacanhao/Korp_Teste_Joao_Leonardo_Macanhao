@@ -11,6 +11,19 @@
   --radius: 12px;
 }
 
+/* Dark theme overrides */
+.dark-theme {
+  --primary: #1f6feb;
+  --primary-hover: #145db8;
+  --bg-page: #0f1724;
+  --bg-card: #0b1220;
+  --text-main: #e6eef8;
+  --text-muted: #9aa6b2;
+  --border: #12202b;
+  --shadow: 0 6px 16px rgba(2,6,23,0.7);
+  --radius: 12px;
+}
+
 body {
   background-color: var(--bg-page);
   margin: 0;
