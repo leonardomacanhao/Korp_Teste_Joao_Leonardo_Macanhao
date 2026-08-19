@@ -1,5 +1,6 @@
 import { Component, AfterViewInit } from '@angular/core';
 import { ThemeService } from './core/services/theme.service';
+import { Router, NavigationEnd } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -13,8 +14,12 @@ export class AppComponent implements AfterViewInit {
   private sunPath = '<circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>';
   private moonPath = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"></path>';
 
-  constructor(private theme: ThemeService) {
+  showHome = true;
+
+  constructor(private theme: ThemeService, private router: Router) {
     this.isDark = this.theme.isDark();
+    const url = this.router.url || '/';
+    this.showHome = url === '/' || url.startsWith('/home');
   }
 
   ngAfterViewInit(): void {
@@ -48,6 +53,14 @@ export class AppComponent implements AfterViewInit {
 
     // Initialize theme icon
     this.updateThemeIcon();
+
+    // Update showHome on route changes so routed pages replace the hero
+    this.router.events.subscribe(ev => {
+      if (ev instanceof NavigationEnd) {
+        const u = ev.urlAfterRedirects || (ev as any).url;
+        this.showHome = (u === '/' || u.startsWith('/home'));
+      }
+    });
   }
 
   toggleTheme() {
