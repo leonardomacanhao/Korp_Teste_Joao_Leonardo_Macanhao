@@ -342,3 +342,11 @@ $transition: all 0.18s ease;
     }
   }
 }
+
+/* Dark-mode overrides for product list */
+body.dark-theme {
+  .pl-page { background: transparent; color: var(--text-main); }
+  .pl-card { background: var(--card-solid); border-color: var(--border); }
+  .pl-table th, .pl-table td { color: var(--text-main); }
+  .pl-action-btn { color: var(--text-muted); border-color: rgba(255,255,255,0.04); }
+}

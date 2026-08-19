@@ -4,79 +4,79 @@
   --primary-hover: #1565C0;
   --bg-page: #f5f7fa;
   --bg-card: #ffffff;
-  --text-main: #1a1a1a;
-  --text-muted: #6c757d;
-  --border: #e9ecef;
-  --shadow: 0 2px 10px rgba(0,0,0,0.06);
-  --radius: 12px;
-}
+  .dark-theme {
+    /* Palette inspired by reference */
+    --primary: #3b82f6;
+    --primary-hover: #60a5fa;
+    --bg-page: #05070d;
+    --bg-card: linear-gradient(180deg,#0f1724,#0a0e18);
+    --card-solid: #0b1220;
+    --text-main: #f4f6fb;
+    --text-muted: #9aa4b8;
+    --muted-2: #5c6478;
+    --border: rgba(255,255,255,0.08);
+    --border-hover: rgba(59,130,246,0.5);
+    --shadow: 0 20px 40px rgba(2,6,23,0.6);
+    --radius: 12px;
 
-/* Dark theme overrides */
-.dark-theme {
-  --primary: #1f6feb;
-  --primary-hover: #145db8;
-  --bg-page: #0f1724;
-  --bg-card: #0b1220;
-  --text-main: #e6eef8;
-  --text-muted: #9aa6b2;
-  --border: #12202b;
-  --shadow: 0 6px 16px rgba(2,6,23,0.7);
-  --radius: 12px;
-}
+    /* Global dark background with subtle accents */
+    background: radial-gradient(circle at 15% 0%, rgba(59,130,246,0.10), transparent 45%), radial-gradient(circle at 85% 100%, rgba(96,165,250,0.06), transparent 40%), var(--bg-page);
 
-body {
-  background-color: var(--bg-page);
-  margin: 0;
-  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-}
+    color-scheme: dark;
 
-.page-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 24px;
-}
-
-.page-header {
-  margin-bottom: 24px;
-  h1 {
-    font-size: 28px;
-    font-weight: 600;
+    /* Ensure basic elements use accessible contrast */
     color: var(--text-main);
-    margin: 0 0 8px 0;
   }
-  p {
-    color: var(--text-muted);
-    margin: 0;
-    font-size: 15px;
+
+  /* Strong global overrides for dark mode to fix components using static colors */
+  body.dark-theme {
+    background: var(--bg-page) !important;
+    color: var(--text-main) !important;
+
+    /* Layout containers */
+    .container, .page-container, .pl-page, .nf-page {
+      color: var(--text-main) !important;
+      background: transparent !important;
+    }
+
+    /* Cards */
+    .content-card, .pl-card, .nf-card, .card {
+      background: var(--card-solid) !important;
+      border-color: var(--border) !important;
+      box-shadow: var(--shadow) !important;
+    }
+
+    header, .navbar {
+      background: rgba(10,14,24,0.75) !important;
+      border-bottom: 1px solid var(--border) !important;
+      color: var(--text-main) !important;
+    }
+
+    /* Typography */
+    h1,h2,h3,h4,h5 { color: var(--text-main) !important; }
+    p, label, a, span, option { color: var(--text-muted) !important; }
+
+    /* Form controls */
+    input, select, textarea, .nf-input, .nf-select {
+      background: transparent !important;
+      color: var(--text-main) !important;
+      border-color: rgba(255,255,255,0.06) !important;
+    }
+
+    /* Table and lists */
+    th, td, .pl-table, .pl-table-wrapper { color: var(--text-main) !important; }
+
+    /* Buttons */
+    button, .nf-btn, .pl-btn { color: var(--text-main) !important; }
+
+    /* Specific fixes for invoice/product components */
+    .nf-field__label { color: var(--text-muted) !important; }
+    .nf-field__error { color: #ffb4b4 !important; }
+    .nf-item { background: rgba(255,255,255,0.02) !important; border-color: rgba(255,255,255,0.04) !important; }
+
+    /* Mat icons and svg */
+    mat-icon, svg { color: var(--text-main) !important; }
   }
-}
-
-.content-card {
-  background: var(--bg-card);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  border: 1px solid var(--border);
-  padding: 24px;
-  margin-bottom: 24px;
-}
-
-.btn-primary {
-  background: var(--primary);
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s;
-  &:hover { background: var(--primary-hover); }
-}
-
-.btn-secondary {
-  background: #6c757d;
-  color: white;
-  border: none;
-  padding: 10px 20px;
   border-radius: 6px;
   font-weight: 500;
   cursor: pointer;
