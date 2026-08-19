@@ -65,17 +65,22 @@
         </span>
       </div>
 
-      <!-- Saldo em Estoque -->
+      <!-- Saldo em Estoque (integer-only qty control) -->
       <div class="pf-field">
         <label class="pf-field__label">Saldo em Estoque <span class="pf-field__required">*</span></label>
-        <input 
-          class="pf-input" 
-          [class.pf-input--error]="f['stockBalance'].invalid && f['stockBalance'].touched"
-          type="number" 
-          formControlName="stockBalance" 
-          placeholder="0"
-          min="0" 
-          max="999999">
+        <div class="qty-control">
+          <button type="button" class="qty-btn" (click)="decreaseStock()" aria-label="Diminuir">-</button>
+          <input
+            class="pf-input qty-input"
+            [class.pf-input--error]="f['stockBalance'].invalid && f['stockBalance'].touched"
+            type="text"
+            [value]="productForm.get('stockBalance')?.value"
+            (input)="onStockInput($event)"
+            (keydown)="onlyInteger($event)"
+            placeholder="0"
+          >
+          <button type="button" class="qty-btn" (click)="increaseStock()" aria-label="Aumentar">+</button>
+        </div>
         <span class="pf-field__error" *ngIf="f['stockBalance'].hasError('required') && f['stockBalance'].touched">
           Saldo é obrigatório
         </span>

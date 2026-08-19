@@ -330,6 +330,16 @@ button.mat-icon-button {
   }
 }
 
+/* Dark theme overrides for invoice list */
+body.dark-theme {
+  .il-page { background: transparent; color: var(--text-main); }
+  .il-card { background: var(--card-solid); border-color: var(--border); box-shadow: none; }
+  .il-table th.mat-header-cell { color: var(--text-muted) !important; background: rgba(255,255,255,0.02) !important; border-bottom-color: rgba(255,255,255,0.04) !important; }
+  .il-table td.mat-cell { color: var(--text-main) !important; border-bottom-color: rgba(255,255,255,0.04) !important; }
+  .il-empty { color: var(--text-muted); }
+  .il-btn--primary { background: var(--primary) !important; color: #fff !important; }
+}
+
 .il-actions {
   display: flex;
   align-items: center;

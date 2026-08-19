@@ -122,4 +122,38 @@ export class ProductFormComponent implements OnInit {
   onCancel(): void {
     this.router.navigate(['/products']);
   }
+
+  increaseStock(): void {
+    const ctl = this.productForm.get('stockBalance');
+    const cur = Number(ctl?.value) || 0;
+    const next = Math.min(cur + 1, 999999);
+    ctl?.setValue(next);
+  }
+
+  decreaseStock(): void {
+    const ctl = this.productForm.get('stockBalance');
+    const cur = Number(ctl?.value) || 0;
+    const next = Math.max(cur - 1, 0);
+    ctl?.setValue(next);
+  }
+
+  onStockInput(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    let v = target.value.replace(/[^0-9]/g, '');
+    if (v === '') v = '0';
+    let n = parseInt(v, 10);
+    if (isNaN(n)) n = 0;
+    n = Math.max(0, Math.min(999999, n));
+    this.productForm.get('stockBalance')?.setValue(n);
+  }
+
+  onlyInteger(event: KeyboardEvent): void {
+    const allowed = ['Backspace','ArrowLeft','ArrowRight','Tab','Delete','Home','End'];
+    if (allowed.includes(event.key)) return;
+    if (!/^[0-9]$/.test(event.key)) {
+      event.preventDefault();
+    }
+  }
+
 }
+
