@@ -116,15 +116,25 @@ public class ProductsController : ControllerBase
 
         try
         {
-            // Validate all items first
-            var productIds = request.Items.Select(i => i.ProductId).Distinct().ToList();
+            var invalidItem = request.Items.FirstOrDefault(i => i.Quantity <= 0);
+            if (invalidItem != null)
+                return BadRequest(new { message = $"Quantidade inválida para produto {invalidItem.ProductId}" });
+
+            // Agrupa itens repetidos para validar e debitar a quantidade total por produto
+            var groupedItems = request.Items
+                .GroupBy(i => i.ProductId)
+                .Select(g => new
+                {
+                    ProductId = g.Key,
+                    Quantity = g.Sum(i => i.Quantity)
+                })
+                .ToList();
+
+            var productIds = groupedItems.Select(i => i.ProductId).ToList();
             var products = await _context.Products.Where(p => productIds.Contains(p.Id)).ToListAsync();
 
-            foreach (var item in request.Items)
+            foreach (var item in groupedItems)
             {
-                if (item.Quantity <= 0)
-                    return BadRequest(new { message = $"Quantidade inválida para produto {item.ProductId}" });
-
                 var product = products.FirstOrDefault(p => p.Id == item.ProductId);
                 if (product == null)
                     return NotFound(new { message = $"Produto {item.ProductId} não encontrado" });
@@ -137,7 +147,7 @@ public class ProductsController : ControllerBase
             }
 
             // Apply all debits
-            foreach (var item in request.Items)
+            foreach (var item in groupedItems)
             {
                 var product = products.First(p => p.Id == item.ProductId);
                 product.StockBalance -= item.Quantity;
