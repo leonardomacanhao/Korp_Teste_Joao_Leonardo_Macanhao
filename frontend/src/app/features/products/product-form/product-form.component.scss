@@ -226,3 +226,24 @@ $font-stack:         "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
 .qty-btn:hover { background:$neutral-50; }
 
 /* dark-mode overrides removed — app uses dark theme by default */
+
+/* When product form is rendered inside the shared .panel, adapt inputs and items to dark theme */
+.panel .pf-card { background: transparent; }
+.panel .pf-input,
+.panel .pf-select,
+.panel .qty-input {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  color: var(--text-0);
+}
+.panel .pf-input:focus,
+.panel .pf-select:focus {
+  box-shadow: 0 0 0 1px rgba(59,130,246,0.15);
+  border-color: rgba(59,130,246,0.35);
+}
+.panel .pf-field__label { color: var(--text-1); }
+.panel .pf-field__error { color: #fca5a5; }
+.panel .pf-loading { background: rgba(59,130,246,0.06); border-bottom-color: rgba(255,255,255,0.04); }
+.panel .pf-error { background: rgba(248,113,113,0.06); color: var(--text-0); border-radius: 8px; }
+.panel .pf-btn--ghost { color: var(--text-0); border-color: rgba(255,255,255,0.04); }
+.panel .pf-btn--primary { background: linear-gradient(135deg,var(--blue), #2563eb); color: #fff; }
