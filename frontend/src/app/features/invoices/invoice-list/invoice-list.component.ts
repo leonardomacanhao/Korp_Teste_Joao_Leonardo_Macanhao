@@ -9,6 +9,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router, RouterLink } from '@angular/router';
 import { BillingService } from '../../../core/services/billing.service';
 import { Invoice } from '../../../shared/models/invoice.model';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-invoice-list',
@@ -29,6 +30,7 @@ export class InvoiceListComponent implements OnInit {
   displayedColumns = ['number', 'createdAt', 'status', 'actions'];
   loading = false;
   error: string | null = null;
+  processingInvoiceIds = new Set<number>();
 
   ngOnInit(): void { this.loadInvoices(); }
 
@@ -46,6 +48,8 @@ export class InvoiceListComponent implements OnInit {
   }
 
   printInvoice(invoice: Invoice): void {
+    if (this.processingInvoiceIds.has(invoice.id)) return;
+
     if (invoice.status === 'Fechada') {
       this.snackBar.open('Esta nota já foi impressa/fechada.', 'Fechar', { duration: 3000 });
       return;
@@ -53,7 +57,11 @@ export class InvoiceListComponent implements OnInit {
 
     this.snackBar.open('Processando impressão e baixa no estoque...', 'Aguarde', { duration: 4000 });
 
-    this.billingService.printInvoice(invoice.id).subscribe({
+    this.processingInvoiceIds.add(invoice.id);
+
+    this.billingService.printInvoice(invoice.id)
+      .pipe(finalize(() => this.processingInvoiceIds.delete(invoice.id)))
+      .subscribe({
       next: (res) => {
         this.snackBar.open(res.message || '✅ Nota impressa com sucesso!', 'Fechar', { duration: 3000 });
         this.loadInvoices();

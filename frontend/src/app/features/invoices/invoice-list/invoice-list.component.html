@@ -55,9 +55,9 @@
                 </td>
                 <td>
                   <div class="actions">
-                    <button class="btn-print" (click)="printInvoice(inv)" [disabled]="inv.status === 'Fechada'">
+                    <button class="btn-print" (click)="printInvoice(inv)" [disabled]="inv.status === 'Fechada' || processingInvoiceIds.has(inv.id)">
                       <mat-icon>print</mat-icon>
-                      <span style="margin-left:8px">{{ inv.status === 'Fechada' ? 'Impresso' : 'Imprimir' }}</span>
+                      <span style="margin-left:8px">{{ inv.status === 'Fechada' ? 'Impresso' : processingInvoiceIds.has(inv.id) ? 'Processando...' : 'Imprimir' }}</span>
                     </button>
 
                     <button class="icon-btn danger" (click)="deleteInvoice(inv)" *ngIf="inv.status === 'Aberta'" title="Excluir nota">
