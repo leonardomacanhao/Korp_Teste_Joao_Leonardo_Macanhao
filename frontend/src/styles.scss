@@ -1,24 +1,5 @@
-/* Global variables (light defaults) */
+/* Global variables: dark-only theme (light mode removed) */
 :root{
-  --bg-0:#f5f7fa;
-  --bg-1:#ffffff;
-  --bg-2:#eef3f8;
-  --border:rgba(0,0,0,0.08);
-  --blue:#1976d2;
-  --blue-light:#60a5fa;
-  --text-0:#0b1220;
-  --text-1:#4b5563;
-  --text-2:#9aa4b8;
-}
-
-*{margin:0;padding:0;box-sizing:border-box;}
-
-html,body{height:100%;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;}
-
-body{color:var(--text-0);min-height:100vh;display:flex;flex-direction:column;background:var(--bg-0);}
-
-/* Dark theme variables and global styles applied when ThemeService adds body.dark-theme */
-body.dark-theme{
   --bg-0:#05070d;
   --bg-1:#0a0e18;
   --bg-2:#10151f;
@@ -29,12 +10,24 @@ body.dark-theme{
   --text-0:#f4f6fb;
   --text-1:#9aa4b8;
   --text-2:#5c6478;
-
-  background: radial-gradient(circle at 15% 0%, rgba(59,130,246,0.10), transparent 45%),radial-gradient(circle at 85% 100%, rgba(96,165,250,0.08), transparent 40%), var(--bg-0);
-  color:var(--text-0);
 }
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+html,body{height:100%;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;}
+
+body{color:var(--text-0);min-height:100vh;display:flex;flex-direction:column;background:radial-gradient(circle at 15% 0%, rgba(59,130,246,0.10), transparent 45%),radial-gradient(circle at 85% 100%, rgba(96,165,250,0.08), transparent 40%), var(--bg-0);}
 
 /* Small utilities */
 .container{padding:24px;max-width:1200px;margin:0 auto;}
+
+/* Shared panel used across lists and forms to keep cards identical */
+.panel{
+  background:linear-gradient(180deg, var(--bg-2), var(--bg-1));
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:28px 28px 8px;
+  box-shadow:0 20px 50px -20px rgba(0,0,0,0.6);
+}
 
 

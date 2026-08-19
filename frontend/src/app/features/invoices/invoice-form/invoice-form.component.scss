@@ -34,9 +34,8 @@ $transition-std:     all 0.18s ease;
 
 
 .nf-page {
-  max-width: 780px;
-  margin: 0 auto;
-  padding: 32px 20px 48px;
+  width: 100%;
+  padding: 0;
   font-family: $font-stack;
   color: $neutral-900;
 }
@@ -80,12 +79,13 @@ $transition-std:     all 0.18s ease;
 }
 
 .nf-card {
-  background: $neutral-0;
-  border: 1px solid $neutral-200;
-  border-radius: $radius-lg;
-  box-shadow: $shadow-card;
+  /* Use global .panel for background/padding to standardize cards */
+  background: transparent;
+  border: none;
+  box-shadow: none;
   overflow: visible;
   position: static;
+  padding: 0;
 }
 
 .nf-loading-bar {
@@ -419,17 +419,7 @@ $transition-std:     all 0.18s ease;
   .qty-btn:hover { background: $neutral-100; }
 }
 
-/* Dark theme overrides to improve contrast */
-body.dark-theme {
-  .nf-page { color: var(--text-main); }
-  .nf-card { background: var(--bg-card); border-color: var(--border); }
-  .nf-select-wrapper, .nf-input, .qty-btn { background: transparent; border-color: rgba(255,255,255,0.08); color: var(--text-main); }
-  .nf-item { background: transparent; border-color: rgba(255,255,255,0.04); box-shadow: none; }
-  .nf-loading-bar { background: rgba(31,111,235,0.06); }
-  .nf-field__label { color: var(--text-muted); }
-  .nf-field__error { color: #ffb4b4; }
-  .nf-btn--primary { background: var(--primary); color: var(--bg-card); }
-}
+/* dark-mode overrides removed — app uses dark theme by default */
 
 .nf-btn-add {
   width: 100%;

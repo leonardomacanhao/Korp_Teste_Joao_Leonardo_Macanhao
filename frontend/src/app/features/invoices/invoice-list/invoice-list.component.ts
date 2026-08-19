@@ -28,15 +28,18 @@ export class InvoiceListComponent implements OnInit {
   dataSource = new MatTableDataSource<Invoice>();
   displayedColumns = ['number', 'createdAt', 'status', 'actions'];
   loading = false;
+  error: string | null = null;
 
   ngOnInit(): void { this.loadInvoices(); }
 
   loadInvoices(): void {
     this.loading = true;
+    this.error = null;
     this.billingService.getInvoices().subscribe({
       next: (data: Invoice[]) => { this.dataSource.data = data; this.loading = false; },
-      error: () => { 
-        this.snackBar.open('Erro ao carregar NFs', 'Fechar', { duration: 3000 }); 
+      error: (err) => { 
+        this.error = 'Não foi possível carregar as notas fiscais.';
+        this.snackBar.open(this.error, 'Fechar', { duration: 3000 }); 
         this.loading = false; 
       }
     });

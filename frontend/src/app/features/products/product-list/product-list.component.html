@@ -1,100 +1,79 @@
-<div class="pl-page">
-  
-  <!-- Cabeçalho -->
-  <div class="pl-header">
-    <div class="pl-header__left">
-      <div class="pl-header__icon">
-        <mat-icon>inventory_2</mat-icon>
+<div class="korp-products-page">
+  <main>
+    <div class="container">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-head-left">
+            <div class="panel-icon">
+              <mat-icon>inventory_2</mat-icon>
+            </div>
+            <div>
+              <h1>Cadastro de Produtos</h1>
+              <p>Gerencie o estoque e informações dos produtos</p>
+            </div>
+          </div>
+
+          <button class="btn-primary" type="button" (click)="goToCreate()">
+            <mat-icon>add</mat-icon>
+            Novo Produto
+          </button>
+        </div>
+
+        <div *ngIf="error" class="empty-state" role="alert">
+          <mat-icon>error_outline</mat-icon>
+          <div style="margin-top:8px">{{ error }}</div>
+          <div style="margin-top:10px">
+            <button class="btn-primary" (click)="loadProducts()">Tentar novamente</button>
+          </div>
+        </div>
+
+        <div *ngIf="loading" class="empty-state">
+          <mat-icon>hourglass_top</mat-icon>
+          <div style="margin-top:8px">Carregando produtos...</div>
+        </div>
+
+        <div class="table-wrap" *ngIf="!loading && dataSource.data.length > 0">
+          <table>
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Descrição</th>
+                <th>Saldo</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let product of dataSource.data">
+                <td><span class="code-badge">{{ product.code }}</span></td>
+                <td class="desc-cell">{{ product.description }}</td>
+                <td>
+                  <span class="qty" [class.low]="product.stockBalance < 10" [class.ok]="product.stockBalance >= 10">
+                    {{ product.stockBalance }} un.
+                  </span>
+                </td>
+                <td>
+                  <div class="actions">
+                    <button class="icon-btn" [routerLink]="['/products/edit', product.id]" title="Editar">
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button class="icon-btn danger" (click)="confirmDelete(product)" [disabled]="product.isActive === false" title="Excluir">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div *ngIf="!loading && dataSource.data.length === 0" class="empty-state">
+          <mat-icon>inventory_2</mat-icon>
+          <p style="margin-top:10px">Nenhum produto ativo cadastrado.</p>
+          <div style="margin-top:12px">
+            <button class="btn-primary" type="button" (click)="goToCreate()">Cadastrar primeiro produto</button>
+          </div>
+        </div>
       </div>
-      <div class="pl-header__text">
-        <h1 class="pl-header__title">Cadastro de Produtos</h1>
-        <p class="pl-header__subtitle">Gerencie o estoque e informações dos produtos</p>
-      </div>
     </div>
-
-    <button class="pl-btn pl-btn--primary" routerLink="/products/new">
-      <mat-icon>add</mat-icon>
-      Novo Produto
-    </button>
-  </div>
-
-  <!-- Mensagem de erro -->
-  <div *ngIf="error" class="pl-error">
-    <mat-icon class="pl-error__icon">error_outline</mat-icon>
-    <span>{{ error }}</span>
-    <button class="pl-btn pl-btn--ghost pl-error__retry" (click)="loadProducts()">Tentar novamente</button>
-  </div>
-
-  <!-- Loading -->
-  <div *ngIf="loading" class="pl-loading">
-    <div class="pl-loading__track"><div class="pl-loading__fill"></div></div>
-    <span class="pl-loading__label">Carregando produtos...</span>
-  </div>
-
-  <!-- Tabela -->
-  <div class="pl-card" *ngIf="!loading">
-    <div *ngIf="dataSource.data.length > 0" class="pl-table-wrapper">
-      <table mat-table [dataSource]="dataSource" class="pl-table">
-
-        <!-- Código -->
-        <ng-container matColumnDef="code">
-          <th mat-header-cell *matHeaderCellDef> Código </th>
-          <td mat-cell *matCellDef="let product"> <span class="pl-code">{{ product.code }}</span> </td>
-        </ng-container>
-
-        <!-- Descrição -->
-        <ng-container matColumnDef="description">
-          <th mat-header-cell *matHeaderCellDef> Descrição </th>
-          <td mat-cell *matCellDef="let product"> {{ product.description }} </td>
-        </ng-container>
-
-        <!-- Saldo -->
-        <ng-container matColumnDef="stockBalance">
-          <th mat-header-cell *matHeaderCellDef> Saldo </th>
-          <td mat-cell *matCellDef="let product"> 
-            <span class="pl-stock" [class.pl-stock--low]="product.stockBalance < 10">
-              {{ product.stockBalance }} un.
-            </span>
-          </td>
-        </ng-container>
-
-<!-- Ações -->
-<ng-container matColumnDef="actions">
-  <th mat-header-cell *matHeaderCellDef> Ações </th>
-  <td mat-cell *matCellDef="let product">
-    
-    <!-- Grupo de ações com espaçamento adequado -->
-    <div class="pl-actions">
-      
-      <!-- Botão Editar: Ícone de Lápis (estilo Flaticon) -->
-      <button class="pl-action-btn pl-action-btn--edit" 
-              [routerLink]="['/products/edit', product.id]" 
-              title="Editar produto">
-        <mat-icon>edit</mat-icon>
-      </button>
-      
-            <!-- Botão Excluir: Ícone de Lixeira (estilo Flaticon) -->
-            <button class="pl-action-btn pl-action-btn--delete" 
-              (click)="confirmDelete(product)" 
-              [disabled]="product.isActive === false" 
-              title="Excluir produto">
-        <mat-icon>delete</mat-icon>
-      </button>
-      
-    </div>
-  </td>
-</ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-      </table>
-    </div>
-
-    <!-- Estado vazio -->
-    <div *ngIf="dataSource.data.length === 0" class="pl-empty">
-      <mat-icon class="pl-empty__icon">inventory_2</mat-icon>
-      <p class="pl-empty__text">Nenhum produto ativo cadastrado.</p>
-      <button class="pl-btn pl-btn--primary" routerLink="/products/new">Cadastrar primeiro produto</button>
-    </div>
-  </div>
+  </main>
 </div>

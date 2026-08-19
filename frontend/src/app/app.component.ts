@@ -1,5 +1,4 @@
 import { Component, AfterViewInit } from '@angular/core';
-import { ThemeService } from './core/services/theme.service';
 import { Router, NavigationEnd } from '@angular/router';
 
 @Component({
@@ -9,15 +8,11 @@ import { Router, NavigationEnd } from '@angular/router';
 })
 export class AppComponent implements AfterViewInit {
   title = 'Korp NF';
-  isDark = false;
-
-  private sunPath = '<circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>';
-  private moonPath = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"></path>';
+  isDark = true;
 
   showHome = true;
 
-  constructor(private theme: ThemeService, private router: Router) {
-    this.isDark = this.theme.isDark();
+  constructor(private router: Router) {
     const url = this.router.url || '/';
     this.showHome = url === '/' || url.startsWith('/home');
   }
@@ -51,8 +46,7 @@ export class AppComponent implements AfterViewInit {
       });
     });
 
-    // Initialize theme icon
-    this.updateThemeIcon();
+    // no theme toggle / icon anymore
 
     // Update showHome on route changes so routed pages replace the hero
     this.router.events.subscribe(ev => {
@@ -63,15 +57,5 @@ export class AppComponent implements AfterViewInit {
     });
   }
 
-  toggleTheme() {
-    this.theme.toggle();
-    this.isDark = this.theme.isDark();
-    this.updateThemeIcon();
-  }
-
-  private updateThemeIcon() {
-    const themeIcon = document.getElementById('themeIcon');
-    if (!themeIcon) return;
-    themeIcon.innerHTML = this.isDark ? this.sunPath : this.moonPath;
-  }
+  // theme toggling removed
 }

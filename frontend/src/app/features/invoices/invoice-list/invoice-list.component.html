@@ -1,102 +1,83 @@
-<div class="il-page">
-  
-  <!-- Cabeçalho da Página -->
-  <div class="il-header">
-    <div class="il-header__left">
-      <div class="il-header__icon">
-        <mat-icon>receipt_long</mat-icon>
-      </div>
-      <div class="il-header__text">
-        <h1 class="il-header__title">Notas Fiscais</h1>
-        <p class="il-header__subtitle">Crie e acompanhe o status das emissões</p>
-      </div>
-    </div>
-
-    <!-- Botão Nova NF - Estilo Fluent -->
-    <button class="il-btn il-btn--primary" routerLink="/invoices/new">
-      <mat-icon>add</mat-icon>
-      Nova NF
-    </button>
-  </div>
-
-  <!-- Card de Conteúdo -->
-  <div class="il-card">
-    
-    <!-- Loading -->
-    <div *ngIf="loading" class="il-loading">
-      <div class="il-loading__track"><div class="il-loading__fill"></div></div>
-      <span class="il-loading__label">Carregando notas fiscais...</span>
-    </div>
-
-    <!-- Tabela de Notas -->
-    <div class="il-table-wrapper" *ngIf="!loading">
-      <table mat-table [dataSource]="dataSource" class="il-table">
-        
-        <!-- Número -->
-        <ng-container matColumnDef="number">
-          <th mat-header-cell *matHeaderCellDef> Número </th>
-          <td mat-cell *matCellDef="let inv"> 
-            <span class="il-code">{{ inv.number }}</span>
-          </td>
-        </ng-container>
-
-        <!-- Data -->
-        <ng-container matColumnDef="createdAt">
-          <th mat-header-cell *matHeaderCellDef> Emissão </th>
-          <td mat-cell *matCellDef="let inv"> 
-            {{ inv.createdAt | date:'dd/MM/yyyy HH:mm' }} 
-          </td>
-        </ng-container>
-
-        <!-- Status -->
-        <ng-container matColumnDef="status">
-          <th mat-header-cell *matHeaderCellDef> Status </th>
-          <td mat-cell *matCellDef="let inv">
-            <span class="il-status" [class.il-status--aberta]="inv.status === 'Aberta'" [class.il-status--fechada]="inv.status === 'Fechada'">
-              {{ inv.status }}
-            </span>
-          </td>
-        </ng-container>
-
-        <!-- Ações -->
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef> Ações </th>
-          <td mat-cell *matCellDef="let inv">
-            <div class="il-actions">
-              
-              <!-- Botão Imprimir -->
-              <button class="il-btn il-btn--primary il-btn--small" 
-                      (click)="printInvoice(inv)"
-                      [disabled]="inv.status === 'Fechada' || loading">
-                <mat-icon>print</mat-icon>
-                {{ inv.status === 'Fechada' ? 'Impresso' : 'Imprimir' }}
-              </button>
-              
-           <!-- Botão Excluir: LIXEIRA moderna (estilo Flaticon) 🔴 -->
-<button class="il-btn il-btn--danger il-btn--icon" 
-        (click)="deleteInvoice(inv)"
-        *ngIf="inv.status === 'Aberta'"
-        title="Excluir nota">
-  <mat-icon>delete</mat-icon>
-</button>
-              
+<div class="korp-notes-page">
+  <main>
+    <div class="container">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-head-left">
+            <div class="panel-icon">
+              <mat-icon>receipt_long</mat-icon>
             </div>
-          </td>
-        </ng-container>
+            <div>
+              <h1>Notas Fiscais</h1>
+              <p>Crie e acompanhe o status das emissões</p>
+            </div>
+          </div>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-      </table>
+          <button class="btn-primary" type="button" (click)="goToCreate()">
+            <mat-icon>add</mat-icon>
+            Nova NF
+          </button>
+        </div>
+
+        <div *ngIf="error" class="empty-state" role="alert">
+          <mat-icon>error_outline</mat-icon>
+          <div style="margin-top:8px">{{ error }}</div>
+          <div style="margin-top:10px">
+            <button class="btn-primary" (click)="loadInvoices()">Tentar novamente</button>
+          </div>
+        </div>
+
+        <div *ngIf="loading" class="empty-state">
+          <mat-icon>hourglass_top</mat-icon>
+          <div style="margin-top:8px">Carregando notas fiscais...</div>
+        </div>
+
+        <div class="table-wrap" *ngIf="!loading && dataSource.data.length > 0">
+          <table>
+            <thead>
+              <tr>
+                <th>Número</th>
+                <th>Emissão</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let inv of dataSource.data">
+                <td><span class="code-badge">{{ inv.number }}</span></td>
+                <td class="date-cell">{{ inv.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td>
+                  <span class="status-badge"
+                        [class.open]="inv.status === 'Aberta'"
+                        [class.closed]="inv.status === 'Fechada'">
+                    {{ inv.status }}
+                  </span>
+                </td>
+                <td>
+                  <div class="actions">
+                    <button class="btn-print" (click)="printInvoice(inv)" [disabled]="inv.status === 'Fechada'">
+                      <mat-icon>print</mat-icon>
+                      <span style="margin-left:8px">{{ inv.status === 'Fechada' ? 'Impresso' : 'Imprimir' }}</span>
+                    </button>
+
+                    <button class="icon-btn danger" (click)="deleteInvoice(inv)" *ngIf="inv.status === 'Aberta'" title="Excluir nota">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div *ngIf="!loading && dataSource.data.length === 0" class="empty-state">
+          <mat-icon>receipt_long</mat-icon>
+          <p style="margin-top:10px">Nenhuma nota fiscal cadastrada.</p>
+          <div style="margin-top:12px">
+            <button class="btn-primary" type="button" (click)="goToCreate()">Criar primeira NF</button>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <!-- Estado Vazio -->
-    <div *ngIf="!loading && dataSource.data.length === 0" class="il-empty">
-      <mat-icon class="il-empty__icon">receipt_long</mat-icon>
-      <p class="il-empty__text">Nenhuma nota fiscal cadastrada ainda.</p>
-      <button class="il-btn il-btn--primary" routerLink="/invoices/new">
-        Criar primeira NF
-      </button>
-    </div>
-
-  </div>
+  </main>
 </div>
