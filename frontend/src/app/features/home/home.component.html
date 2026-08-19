@@ -1,0 +1,35 @@
+<main>
+  <div class="hero">
+    <span class="eyebrow"><span class="eyebrow-dot"></span> Sistema Korp</span>
+    <h1>Bem-vindo</h1>
+    <p class="lead">Selecione uma opção abaixo para começar a gerenciar seu negócio.</p>
+
+    <div class="cards">
+      <div class="card" (mousemove)="updateCardGlow($event)">
+        <div class="card-icon">
+          <!-- product icon -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path><path d="m3.3 7 8.7 5 8.7-5"></path><path d="M12 22V12"></path></svg>
+        </div>
+        <h3>Produtos</h3>
+        <p>Gerencie o cadastro de produtos e estoques com praticidade e controle total.</p>
+        <button class="card-btn" routerLink="/products">
+          Ir para Produtos
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </button>
+      </div>
+
+      <div class="card" (mousemove)="updateCardGlow($event)">
+        <div class="card-icon">
+          <!-- invoice icon -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"></path><path d="M14 2v6h6"></path><path d="M9 13h6"></path><path d="M9 17h6"></path><path d="M9 9h1"></path></svg>
+        </div>
+        <h3>Notas Fiscais</h3>
+        <p>Crie e imprima notas fiscais com controle de status em tempo real.</p>
+        <button class="card-btn" routerLink="/invoices">
+          Ir para Notas
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</main>
