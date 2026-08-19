@@ -10,9 +10,8 @@
 </nav>
 
 <div class="navbar-actions">
-  <button class="theme-toggle" (click)="toggleTheme()" [attr.aria-pressed]="isDark">
-    <span *ngIf="!isDark">🌙</span>
-    <span *ngIf="isDark">☀️</span>
+  <button class="theme-toggle" (click)="toggleTheme()" [attr.aria-pressed]="isDark" aria-label="Alternar tema">
+    <mat-icon>{{ isDark ? 'light_mode' : 'dark_mode' }}</mat-icon>
   </button>
 </div>
 

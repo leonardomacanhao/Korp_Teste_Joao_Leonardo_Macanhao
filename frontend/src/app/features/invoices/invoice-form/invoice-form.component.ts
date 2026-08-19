@@ -73,6 +73,36 @@ export class InvoiceFormComponent implements OnInit {
     this.items.push(this.createItemGroup());
   }
 
+  increaseQty(index: number) {
+    const control = this.items.at(index).get('quantity');
+    const cur = Math.max(1, Math.floor(Number(control?.value) || 0));
+    control?.setValue(cur + 1);
+    control?.markAsTouched();
+  }
+
+  decreaseQty(index: number) {
+    const control = this.items.at(index).get('quantity');
+    const cur = Math.max(1, Math.floor(Number(control?.value) || 0));
+    control?.setValue(Math.max(1, cur - 1));
+    control?.markAsTouched();
+  }
+
+  onQuantityInput(event: any, index: number) {
+    const raw = event.target.value || '';
+    // remove non-digits
+    const digits = raw.replace(/[^0-9]/g, '');
+    const val = digits === '' ? '' : Math.max(1, parseInt(digits, 10));
+    const control = this.items.at(index).get('quantity');
+    control?.setValue(val === '' ? '' : val);
+  }
+
+  onlyInteger(e: KeyboardEvent) {
+    // allow control keys
+    const allowed = ['Backspace','ArrowLeft','ArrowRight','Tab','Delete','Home','End'];
+    if (allowed.includes(e.key)) return;
+    if (!/^[0-9]$/.test(e.key)) e.preventDefault();
+  }
+
   removeItem(index: number): void {
     if (this.items.length > 1) {
       this.items.removeAt(index);

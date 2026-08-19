@@ -76,13 +76,18 @@
                   Quantidade
                   <span class="nf-field__required">*</span>
                 </label>
-                <input
-                  class="nf-input"
-                  [class.nf-input--error]="item.get('quantity')?.invalid && item.get('quantity')?.touched"
-                  type="number"
-                  formControlName="quantity"
-                  min="1"
-                  placeholder="1">
+                <div class="qty-control">
+                  <button type="button" class="qty-btn" (click)="decreaseQty(i)" aria-label="Diminuir">-</button>
+                  <input
+                    class="nf-input qty-input"
+                    [class.nf-input--error]="item.get('quantity')?.invalid && item.get('quantity')?.touched"
+                    type="text"
+                    [value]="item.get('quantity')?.value"
+                    (input)="onQuantityInput($event, i)"
+                    (keydown)="onlyInteger($event)"
+                    placeholder="1">
+                  <button type="button" class="qty-btn" (click)="increaseQty(i)" aria-label="Aumentar">+</button>
+                </div>
                 <span class="nf-field__error" *ngIf="item.get('quantity')?.hasError('required') && item.get('quantity')?.touched">
                   Obrigatório
                 </span>
