@@ -148,6 +148,52 @@ O frontend exibe um SnackBar vermelho explicativo.
 O usuário pode tentar novamente quando o serviço estiver estável.
 Isso simula um Saga Pattern síncrono, garantindo consistência eventual e experiência transparente.
 
+## 🔬 Teste E2E (Smoke) - Rápido
+
+Passos para executar um teste ponta-a-ponta rápido que cobre criação de produto, emissão e impressão/fechamento da nota:
+
+1. Abra três terminais diferentes.
+
+2. No primeiro terminal, execute o Stock Service:
+```bash
+cd stock-service
+dotnet restore
+dotnet ef database update
+dotnet run --urls "http://localhost:5083"
+```
+
+3. No segundo terminal, execute o Billing Service (apontando para o Stock):
+```bash
+cd billing-service
+dotnet restore
+dotnet ef database update
+ServiceUrls__StockService=http://localhost:5083 dotnet run --urls "http://localhost:5002"
+```
+
+4. No terceiro terminal, sirva o frontend:
+```bash
+cd frontend
+npm install
+npm start
+# abrir http://localhost:4200 no navegador
+```
+
+5. Fluxo de verificação (curl):
+```bash
+# criar produto no stock
+curl -X POST http://localhost:5083/api/products -H "Content-Type: application/json" -d '{"code":"E2E-1","description":"Prod E2E","stockBalance":5,"isActive":true}'
+
+# criar nota (substitua PRODUCT_ID pelo id retornado)
+curl -X POST http://localhost:5002/api/invoices -H "Content-Type: application/json" -d '[{"productId":1,"quantity":1}]'
+
+# imprimir nota (substitua INVOICE_ID pelo id retornado)
+curl -X POST http://localhost:5002/api/invoices/1/print
+```
+
+Se tudo ocorrer bem, a resposta do `print` retornará mensagem de sucesso e a nota ficará com `status: "Fechada"`.
+
+---
+
 📁 Estrutura do Projeto
 
 .
