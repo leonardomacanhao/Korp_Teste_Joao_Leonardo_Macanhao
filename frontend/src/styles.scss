@@ -1,5 +1,9 @@
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
 
+html {
+  scrollbar-gutter: stable;
+}
+
 /* Global variables: dark-only theme (light mode removed) */
 :root{
   --bg-0:#05070d;
