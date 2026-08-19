@@ -34,29 +34,6 @@ const routes: Routes = [
 
   { path: 'invoices', loadComponent: () => import('./features/invoices/invoice-list/invoice-list.component').then(m => m.InvoiceListComponent) },
 
-// Módulo de Produtos
-{
-  path: 'products',
-  loadComponent: () => import('./features/products/product-list/product-list.component')
-    .then(m => m.ProductListComponent)
-},
-{
-  path: 'products/new',
-  loadComponent: () => import('./features/products/product-form/product-form.component')
-    .then(m => m.ProductFormComponent)
-},
-{
-  path: 'products/edit/:id',
-  loadComponent: () => import('./features/products/product-form/product-form.component')
-    .then(m => m.ProductFormComponent)
-},
-
-// Módulo de Notas Fiscais ⬅️ NOVO
-{
-  path: 'invoices',
-  loadComponent: () => import('./features/invoices/invoice-list/invoice-list.component')
-    .then(m => m.InvoiceListComponent)
-},
 {
   path: 'invoices/new',
   loadComponent: () => import('./features/invoices/invoice-form/invoice-form.component')
