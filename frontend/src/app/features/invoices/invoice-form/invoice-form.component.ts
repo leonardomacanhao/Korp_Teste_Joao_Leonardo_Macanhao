@@ -73,22 +73,23 @@ export class InvoiceFormComponent implements OnInit {
     this.items.push(this.createItemGroup());
   }
 
-  increaseQty(index: number) {
+  increaseQty(index: number): void {
     const control = this.items.at(index).get('quantity');
     const cur = Math.max(1, Math.floor(Number(control?.value) || 0));
     control?.setValue(cur + 1);
     control?.markAsTouched();
   }
 
-  decreaseQty(index: number) {
+  decreaseQty(index: number): void {
     const control = this.items.at(index).get('quantity');
     const cur = Math.max(1, Math.floor(Number(control?.value) || 0));
     control?.setValue(Math.max(1, cur - 1));
     control?.markAsTouched();
   }
 
-  onQuantityInput(event: any, index: number) {
-    const raw = event.target.value || '';
+  onQuantityInput(event: Event, index: number): void {
+    const target = event.target as HTMLInputElement;
+    const raw = target.value || '';
     // remove non-digits
     const digits = raw.replace(/[^0-9]/g, '');
     const val = digits === '' ? '' : Math.max(1, parseInt(digits, 10));
@@ -96,7 +97,7 @@ export class InvoiceFormComponent implements OnInit {
     control?.setValue(val === '' ? '' : val);
   }
 
-  onlyInteger(e: KeyboardEvent) {
+  onlyInteger(e: KeyboardEvent): void {
     // allow control keys
     const allowed = ['Backspace','ArrowLeft','ArrowRight','Tab','Delete','Home','End'];
     if (allowed.includes(e.key)) return;

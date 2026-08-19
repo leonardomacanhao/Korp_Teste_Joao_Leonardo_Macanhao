@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router, RouterLink } from '@angular/router';
-import { catchError, finalize, Observable, throwError } from 'rxjs';
+import { EMPTY, catchError, finalize } from 'rxjs';
 
 import { Product } from '../../../shared/models/product.model';
 import { StockService } from '../../../core/services/stock.service';
@@ -46,10 +46,10 @@ export class ProductListComponent implements OnInit {
     this.error = null;
 
     this.stockService.getProducts().pipe(
-      catchError((err) => {
+      catchError(() => {
         this.error = 'Não foi possível carregar os produtos.';
         this.snackBar.open(this.error, 'Fechar', { duration: 5000 });
-        return throwError(() => err);
+        return EMPTY;
       }),
       finalize(() => { this.loading = false; })
     ).subscribe({
@@ -59,9 +59,6 @@ export class ProductListComponent implements OnInit {
     });
   }
 
-  isProdutoInativo(code: string | null | undefined): boolean {
-    return code != null && code.includes('[INATIVO]');
-  }
 
   goToCreate(): void {
     this.router.navigate(['/products/new']);

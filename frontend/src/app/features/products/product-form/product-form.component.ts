@@ -67,8 +67,7 @@ export class ProductFormComponent implements OnInit {
         });
         this.carregandoDados = false;
       },
-      error: (err) => {
-        console.error('Erro ao carregar produto:', err);
+      error: () => {
         this.erroCarregamento = 'Não foi possível carregar os dados do produto.';
         this.carregandoDados = false;
         this.snackBar.open('Erro ao carregar produto', 'Fechar', { duration: 3000 });
@@ -96,20 +95,17 @@ export class ProductFormComponent implements OnInit {
       stockBalance: Number(this.productForm.value.stockBalance)
     };
 
-    console.log('📤 Enviando:', payload);
-
     const request$ = this.isEdit && this.productId
       ? this.stockService.updateProduct(this.productId, payload)
       : this.stockService.createProduct(payload);
 
     request$.subscribe({
-      next: (res) => {
+      next: () => {
         const msg = this.isEdit ? 'Produto atualizado!' : 'Produto cadastrado!';
         this.snackBar.open(msg, 'Fechar', { duration: 2500, panelClass: 'success-snack' });
         this.router.navigate(['/products']);
       },
-      error: (err) => {
-        console.error('❌ Erro:', err);
+      error: () => {
         this.snackBar.open('Erro ao salvar. Verifique o backend.', 'Fechar', { 
           duration: 4000, 
           panelClass: 'error-snack' 
