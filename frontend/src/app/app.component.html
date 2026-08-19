@@ -1,19 +1,68 @@
-<nav class="navbar">
+<header>
+  <nav>
+    <div class="brand">
+      <div class="brand-mark">K</div>
+      <div>
+        Korp <span class="brand-sub">— Sistema de Notas Fiscais</span>
+      </div>
+    </div>
 
-  <span class="title">Korp - Sistema de Notas Fiscais</span>
+    <ul class="nav-links" id="navLinks">
+      <li><a routerLink="/home" routerLinkActive="active">Início</a></li>
+      <li><a routerLink="/products">Produtos</a></li>
+      <li><a routerLink="/invoices">Notas Fiscais</a></li>
+    </ul>
 
-  <div class="nav-links">
-    <a routerLink="/home" routerLinkActive="active">Início</a>
-    <a routerLink="/products" routerLinkActive="active">Produtos</a>
-    <a routerLink="/invoices" routerLinkActive="active">Notas Fiscais</a>
+    <div class="nav-right">
+      <button class="theme-toggle" id="themeToggle" title="Alternar tema" (click)="toggleTheme()">
+        <svg id="themeIcon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg>
+      </button>
+      <button class="menu-toggle" id="menuToggle">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <div class="hero">
+    <span class="eyebrow"><span class="eyebrow-dot"></span> Sistema Korp</span>
+    <h1>Bem-vindo</h1>
+    <p class="lead">Selecione uma opção abaixo para começar a gerenciar seu negócio.</p>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">
+          <!-- product icon -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path><path d="m3.3 7 8.7 5 8.7-5"></path><path d="M12 22V12"></path></svg>
+        </div>
+        <h3>Produtos</h3>
+        <p>Gerencie o cadastro de produtos e estoques com praticidade e controle total.</p>
+        <button class="card-btn" routerLink="/products">
+          Ir para Produtos
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </button>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">
+          <!-- invoice icon -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"></path><path d="M14 2v6h6"></path><path d="M9 13h6"></path><path d="M9 17h6"></path><path d="M9 9h1"></path></svg>
+        </div>
+        <h3>Notas Fiscais</h3>
+        <p>Crie e imprima notas fiscais com controle de status em tempo real.</p>
+        <button class="card-btn" routerLink="/invoices">
+          Ir para Notas
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </button>
+      </div>
+    </div>
   </div>
-</nav>
+</main>
 
-<div class="navbar-actions">
-  <button class="theme-toggle" (click)="toggleTheme()" [attr.aria-pressed]="isDark" aria-label="Alternar tema">
-    <mat-icon>{{ isDark ? 'light_mode' : 'dark_mode' }}</mat-icon>
-  </button>
-</div>
+<footer>
+  © 2026 Korp. Todos os direitos reservados.
+</footer>
 
 <div class="container">
   <router-outlet></router-outlet>
