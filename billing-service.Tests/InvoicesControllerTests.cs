@@ -95,7 +95,6 @@ public class InvoicesControllerTests
 
         var result = await controller.PrintInvoice(invoice.Id);
 
-        // Reload invoice from DB: must remain 'Aberta'
         var inv = ctx.Invoices.First(i => i.Id == invoice.Id);
         Assert.Equal("Aberta", inv.Status);
     }

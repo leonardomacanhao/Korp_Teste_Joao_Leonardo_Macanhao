@@ -27,7 +27,9 @@ public class InvoicesController : ControllerBase
     public async Task<ActionResult<IEnumerable<Invoice>>> GetInvoices()
     {
         var invoices = await _context.Invoices
+            .AsNoTracking()
             .Include(i => i.Items)
+            .OrderByDescending(i => i.CreatedAt)
             .ToListAsync();
         return Ok(invoices);
     }
@@ -36,6 +38,7 @@ public class InvoicesController : ControllerBase
     public async Task<ActionResult<Invoice>> GetInvoice(int id)
     {
         var invoice = await _context.Invoices
+            .AsNoTracking()
             .Include(i => i.Items)
             .FirstOrDefaultAsync(i => i.Id == id);
         
@@ -104,7 +107,7 @@ public class InvoicesController : ControllerBase
                 Items = invoice.Items.Select(i => new { ProductId = i.ProductId, Quantity = i.Quantity }).ToList()
             };
 
-            var response = await client.PostAsJsonAsync("/api/products/deductions", payload);
+            using var response = await client.PostAsJsonAsync("/api/products/deductions", payload);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -117,7 +120,6 @@ public class InvoicesController : ControllerBase
                 return BadRequest(new { message = "Não foi possível debitar estoque.", details = err });
             }
 
-            // Apenas marcar como fechada após sucesso do débito atômico
             invoice.Status = InvoiceStatuses.Closed;
             await _context.SaveChangesAsync();
 
@@ -130,6 +132,11 @@ public class InvoicesController : ControllerBase
                 error = "Falha na comunicação com o serviço de estoque.",
                 details = "Verifique se o Stock Service está rodando."
             });
+        }
+        catch (TaskCanceledException ex)
+        {
+            _logger.LogWarning(ex, "Timeout ao acessar o Stock Service para a nota {InvoiceId}", id);
+            return StatusCode(504, new { error = "O serviço de estoque demorou para responder." });
         }
     }
 

@@ -49,7 +49,6 @@ public class StockControllerTests
 
         var result = await controller.DeductBatch(request);
 
-        // After failure, balances must remain unchanged
         var a = ctx.Products.First(p => p.Code == "A");
         var b = ctx.Products.First(p => p.Code == "B");
 
@@ -93,14 +92,12 @@ public class StockControllerTests
     [Fact]
     public async Task DeductBatch_Concurrent_AllowsOnlyOneSuccess()
     {
-        // use a temporary file-based SQLite DB to allow true concurrent connections
         var dbFile = System.IO.Path.Combine(System.IO.Path.GetTempPath(), $"stock_test_{Guid.NewGuid()}.db");
         var connStr = $"DataSource={dbFile}";
         var options = new DbContextOptionsBuilder<AppDbContext>()
             .UseSqlite(connStr)
             .Options;
 
-        // create initial data
         using (var seed = new AppDbContext(options))
         {
             seed.Database.EnsureCreated();
@@ -108,7 +105,6 @@ public class StockControllerTests
             seed.SaveChanges();
         }
 
-        // run two concurrent deductions
         var task1 = Task.Run(async () =>
         {
             using var ctx1 = new AppDbContext(options);

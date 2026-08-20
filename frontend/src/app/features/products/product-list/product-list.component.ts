@@ -32,8 +32,6 @@ export class ProductListComponent implements OnInit {
   private router = inject(Router);
 
   dataSource = new MatTableDataSource<Product>();
-  displayedColumns: string[] = ['code', 'description', 'stockBalance', 'actions'];
-
   loading = false;
   error: string | null = null;
 
@@ -59,7 +57,6 @@ export class ProductListComponent implements OnInit {
     });
   }
 
-
   goToCreate(): void {
     this.router.navigate(['/products/new']);
   }
@@ -69,7 +66,7 @@ export class ProductListComponent implements OnInit {
       this.stockService.deleteProduct(product.id).subscribe({
         next: () => {
           this.snackBar.open('Produto inativado.', 'Fechar', { duration: 2500 });
-          this.loadProducts(); // Recarrega a lista
+          this.loadProducts();
         },
         error: () => {
           this.snackBar.open('Erro ao inativar produto.', 'Fechar', { duration: 4000 });

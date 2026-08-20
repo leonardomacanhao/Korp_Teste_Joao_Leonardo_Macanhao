@@ -21,15 +21,15 @@
 
         <div *ngIf="error" class="empty-state" role="alert">
           <mat-icon>error_outline</mat-icon>
-          <div style="margin-top:8px">{{ error }}</div>
-          <div style="margin-top:10px">
+          <div class="state-message">{{ error }}</div>
+          <div class="state-action">
             <button class="btn-primary" (click)="loadProducts()">Tentar novamente</button>
           </div>
         </div>
 
         <div *ngIf="loading" class="empty-state">
           <mat-icon>hourglass_top</mat-icon>
-          <div style="margin-top:8px">Carregando produtos...</div>
+          <div class="state-message">Carregando produtos...</div>
         </div>
 
         <div class="table-wrap" *ngIf="!loading && dataSource.data.length > 0">
@@ -68,8 +68,8 @@
 
         <div *ngIf="!loading && !error && dataSource.data.length === 0" class="empty-state">
           <mat-icon>inventory_2</mat-icon>
-          <p style="margin-top:10px">Nenhum produto ativo cadastrado.</p>
-          <div style="margin-top:12px">
+          <p class="state-action">Nenhum produto ativo cadastrado.</p>
+          <div class="state-action--spacious">
             <button class="btn-primary" type="button" (click)="goToCreate()">Cadastrar primeiro produto</button>
           </div>
         </div>

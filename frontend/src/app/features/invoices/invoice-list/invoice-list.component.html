@@ -21,15 +21,15 @@
 
         <div *ngIf="error" class="empty-state" role="alert">
           <mat-icon>error_outline</mat-icon>
-          <div style="margin-top:8px">{{ error }}</div>
-          <div style="margin-top:10px">
+          <div class="state-message">{{ error }}</div>
+          <div class="state-action">
             <button class="btn-primary" (click)="loadInvoices()">Tentar novamente</button>
           </div>
         </div>
 
         <div *ngIf="loading" class="empty-state">
           <mat-icon>hourglass_top</mat-icon>
-          <div style="margin-top:8px">Carregando notas fiscais...</div>
+          <div class="state-message">Carregando notas fiscais...</div>
         </div>
 
         <div class="table-wrap" *ngIf="!loading && dataSource.data.length > 0">
@@ -57,7 +57,7 @@
                   <div class="actions">
                     <button class="btn-print" (click)="printInvoice(inv)" [disabled]="inv.status === invoiceStatus.closed || processingInvoiceIds.has(inv.id)">
                       <mat-icon>print</mat-icon>
-                      <span style="margin-left:8px">{{ inv.status === invoiceStatus.closed ? 'Impresso' : processingInvoiceIds.has(inv.id) ? 'Processando...' : 'Imprimir' }}</span>
+                      <span class="print-label">{{ inv.status === invoiceStatus.closed ? 'Impresso' : processingInvoiceIds.has(inv.id) ? 'Processando...' : 'Imprimir' }}</span>
                     </button>
 
                     <button class="icon-btn danger" (click)="deleteInvoice(inv)" *ngIf="inv.status === invoiceStatus.open" title="Excluir nota">
@@ -72,8 +72,8 @@
 
         <div *ngIf="!loading && dataSource.data.length === 0" class="empty-state">
           <mat-icon>receipt_long</mat-icon>
-          <p style="margin-top:10px">Nenhuma nota fiscal cadastrada.</p>
-          <div style="margin-top:12px">
+          <p class="state-action">Nenhuma nota fiscal cadastrada.</p>
+          <div class="state-action--spacious">
             <button class="btn-primary" type="button" (click)="goToCreate()">Criar primeira NF</button>
           </div>
         </div>

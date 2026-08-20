@@ -65,7 +65,7 @@ export class InvoiceListComponent implements OnInit {
       .pipe(finalize(() => this.processingInvoiceIds.delete(invoice.id)))
       .subscribe({
       next: (res) => {
-        this.snackBar.open(res.message || '✅ Nota impressa com sucesso!', 'Fechar', { duration: 3000 });
+        this.snackBar.open(res.message || 'Nota impressa com sucesso!', 'Fechar', { duration: 3000 });
         this.loadInvoices();
       },
       error: (err) => {

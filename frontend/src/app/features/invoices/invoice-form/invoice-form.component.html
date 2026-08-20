@@ -1,7 +1,6 @@
 <main class="korp-notes-page">
   <div class="container">
 
-    <!-- Header -->
     <div class="nf-header">
     <div class="nf-header__icon">
       <mat-icon>receipt_long</mat-icon>
@@ -12,10 +11,8 @@
     </div>
   </div>
 
-    <!-- Card principal -->
     <div class="panel nf-card">
 
-    <!-- Loading overlay de produtos -->
     <div class="nf-loading-bar" *ngIf="loadingProducts">
       <div class="nf-loading-bar__track">
         <div class="nf-loading-bar__fill"></div>
@@ -25,7 +22,6 @@
 
     <form [formGroup]="invoiceForm" autocomplete="off">
 
-      <!-- Tabela de itens -->
       <div class="nf-items-section">
         <div class="nf-items-header">
           <span class="nf-items-header__label">Itens da Nota</span>
@@ -40,15 +36,12 @@
             class="nf-item"
             [class.nf-item--invalid]="item.invalid && item.touched">
 
-            <!-- Índice -->
             <div class="nf-item__index">
               <span>{{ i + 1 }}</span>
             </div>
 
-            <!-- Campos -->
             <div class="nf-item__fields">
 
-              <!-- Produto -->
               <div class="nf-field nf-field--product">
                 <label class="nf-field__label" [class.nf-field__label--error]="item.get('productId')?.invalid && item.get('productId')?.touched">
                   Produto
@@ -71,7 +64,6 @@
                 </span>
               </div>
 
-              <!-- Quantidade -->
               <div class="nf-field nf-field--qty">
                 <label class="nf-field__label" [class.nf-field__label--error]="item.get('quantity')?.invalid && item.get('quantity')?.touched">
                   Quantidade
@@ -99,7 +91,6 @@
 
             </div>
 
-            <!-- Remover -->
             <button
               class="nf-item__remove"
               type="button"
@@ -114,7 +105,6 @@
 
         </div>
 
-        <!-- Botão adicionar -->
         <button
           class="nf-btn-add"
           type="button"
@@ -126,7 +116,6 @@
 
       </div>
 
-      <!-- Rodapé do formulário -->
       <div class="nf-form-footer">
         <button
           class="nf-btn nf-btn--ghost"

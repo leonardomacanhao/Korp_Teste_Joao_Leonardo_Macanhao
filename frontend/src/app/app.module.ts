@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
-  declarations: [AppComponent], // 👈 ESSENCIAL: registra o componente raiz
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

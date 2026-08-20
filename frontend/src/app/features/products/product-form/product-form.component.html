@@ -1,7 +1,6 @@
 <main class="korp-products-page">
   <div class="container">
 
-  <!-- Header -->
   <div class="pf-header">
     <div class="pf-header__icon">
       <mat-icon>{{ isEdit ? 'edit' : 'add_box' }}</mat-icon>
@@ -12,25 +11,20 @@
     </div>
   </div>
 
-    <!-- Card principal -->
     <div class="panel pf-card">
 
-    <!-- Loading ao carregar dados para edição -->
     <div class="pf-loading" *ngIf="carregandoDados">
       <div class="pf-loading__track"><div class="pf-loading__fill"></div></div>
       <span class="pf-loading__label">Carregando dados...</span>
     </div>
 
-    <!-- Erro ao carregar -->
     <div class="pf-error" *ngIf="erroCarregamento">
       <mat-icon>error_outline</mat-icon>
       <span>{{ erroCarregamento }}</span>
     </div>
 
-    <!-- Formulário -->
     <form [formGroup]="productForm" (ngSubmit)="onSubmit($event)">
 
-      <!-- Código -->
       <div class="pf-field">
         <label class="pf-field__label">Código <span class="pf-field__required">*</span></label>
         <input 
@@ -48,7 +42,6 @@
         </span>
       </div>
 
-      <!-- Descrição -->
       <div class="pf-field">
         <label class="pf-field__label">Descrição <span class="pf-field__required">*</span></label>
         <input 
@@ -66,7 +59,6 @@
         </span>
       </div>
 
-      <!-- Saldo em Estoque (integer-only qty control) -->
       <div class="pf-field">
         <label class="pf-field__label">Saldo em Estoque <span class="pf-field__required">*</span></label>
         <div class="qty-control">
@@ -90,14 +82,13 @@
         </span>
       </div>
 
-      <!-- Ações -->
       <div class="pf-actions">
         <button 
           class="pf-btn pf-btn--ghost" 
           type="button" 
           (click)="onCancel()" 
           [disabled]="loading || carregandoDados">
-          ← Cancelar
+          Cancelar
         </button>
         <button 
           class="pf-btn pf-btn--primary" 

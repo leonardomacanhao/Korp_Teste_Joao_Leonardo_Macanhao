@@ -52,7 +52,6 @@ $font-stack:         "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
 }
 
 .pf-card {
-  /* Use global .panel for background/padding to standardize cards */
   background: transparent;
   border: none;
   box-shadow: none;
@@ -219,15 +218,11 @@ $font-stack:         "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
   .pf-card { padding: 20px; }
 }
 
-/* qty-control styles */
 .qty-control { display:flex; align-items:center; gap:8px; }
 .qty-input { width:80px; text-align:center; padding:6px 8px; }
 .qty-btn { width:36px; height:36px; border-radius:6px; border:1px solid $neutral-200; background:transparent; cursor:pointer; color:$neutral-600; font-weight:600; }
 .qty-btn:hover { background:$neutral-50; }
 
-/* dark-mode overrides removed — app uses dark theme by default */
-
-/* When product form is rendered inside the shared .panel, adapt inputs and items to dark theme */
 .panel .pf-card { background: transparent; }
 .panel .pf-input,
 .panel .pf-select,

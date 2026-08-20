@@ -90,7 +90,6 @@ export class InvoiceFormComponent implements OnInit {
   onQuantityInput(event: Event, index: number): void {
     const target = event.target as HTMLInputElement;
     const raw = target.value || '';
-    // remove non-digits
     const digits = raw.replace(/[^0-9]/g, '');
     const val = digits === '' ? '' : Math.max(1, parseInt(digits, 10));
     const control = this.items.at(index).get('quantity');
@@ -98,7 +97,6 @@ export class InvoiceFormComponent implements OnInit {
   }
 
   onlyInteger(e: KeyboardEvent): void {
-    // allow control keys
     const allowed = ['Backspace','ArrowLeft','ArrowRight','Tab','Delete','Home','End'];
     if (allowed.includes(e.key)) return;
     if (!/^[0-9]$/.test(e.key)) e.preventDefault();

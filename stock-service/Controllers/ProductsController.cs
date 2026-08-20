@@ -13,7 +13,6 @@ public class ProductsController : ControllerBase
 
     public ProductsController(AppDbContext context) => _context = context;
 
-    // ✅ LISTAR TODOS (GET /api/products)
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         => await _context.Products
@@ -22,7 +21,6 @@ public class ProductsController : ControllerBase
             .OrderBy(p => p.Code)
             .ToListAsync();
 
-    // ✅ BUSCAR POR ID (GET /api/products/{id}) ← ESSENCIAL PARA EDIÇÃO
     [HttpGet("{id}")]
     public async Task<ActionResult<Product>> GetProduct(int id)
     {
@@ -35,17 +33,22 @@ public class ProductsController : ControllerBase
         return Ok(product);
     }
 
-    // ✅ CRIAR (POST /api/products)
     [HttpPost]
-    public async Task<ActionResult<Product>> CreateProduct(Product product)
+    public async Task<ActionResult<Product>> CreateProduct(ProductRequest request)
     {
-        product.Code = product.Code.Trim();
-        product.Description = product.Description.Trim();
-        if (product.Code.Length == 0 || product.Description.Length == 0)
+        var code = request.Code.Trim();
+        var description = request.Description.Trim();
+        if (code.Length == 0 || description.Length == 0)
             return BadRequest(new { message = "Código e descrição são obrigatórios" });
 
-        product.Id = 0;
-        product.IsActive = true;
+        var product = new Product
+        {
+            Code = code,
+            Description = description,
+            StockBalance = request.StockBalance,
+            IsActive = true
+        };
+
         _context.Products.Add(product);
         try
         {
@@ -59,20 +62,21 @@ public class ProductsController : ControllerBase
         return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
     }
 
-    // ✅ ATUALIZAR (PUT /api/products/{id})
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateProduct(int id, Product product)
+    public async Task<IActionResult> UpdateProduct(int id, ProductRequest request)
     {
         var existing = await _context.Products.FindAsync(id);
         if (existing == null || !existing.IsActive)
             return NotFound(new { message = "Produto não encontrado" });
 
-        existing.Code = product.Code.Trim();
-        existing.Description = product.Description.Trim();
-        if (existing.Code.Length == 0 || existing.Description.Length == 0)
+        var code = request.Code.Trim();
+        var description = request.Description.Trim();
+        if (code.Length == 0 || description.Length == 0)
             return BadRequest(new { message = "Código e descrição são obrigatórios" });
 
-        existing.StockBalance = product.StockBalance;
+        existing.Code = code;
+        existing.Description = description;
+        existing.StockBalance = request.StockBalance;
 
         try
         {
@@ -85,7 +89,6 @@ public class ProductsController : ControllerBase
         return NoContent();
     }
 
-    // ✅ SOFT DELETE (DELETE /api/products/{id})
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteProduct(int id)
     {
@@ -93,14 +96,12 @@ public class ProductsController : ControllerBase
         if (product == null) 
             return NotFound(new { message = "Produto não encontrado" });
         
-        // Soft delete: marca como inativo ao invés de remover
         product.IsActive = false;
 
         await _context.SaveChangesAsync();
         return NoContent();
     }
 
-    // DÉBITO ATÔMICO EM LOTE (idempotente)
     [HttpPost("deductions")]
     public async Task<IActionResult> DeductBatch([FromBody] StockDeductionRequest request)
     {
@@ -156,8 +157,11 @@ public class ProductsController : ControllerBase
                     return Conflict(new { message = $"O saldo do produto {item.ProductId} foi alterado por outra operação" });
             }
 
-            // Register operation for idempotency
-            _context.StockOperations.Add(new StockOperation { OperationId = request.OperationId, CreatedAt = DateTime.UtcNow });
+            _context.StockOperations.Add(new StockOperation
+            {
+                OperationId = request.OperationId,
+                CreatedAt = DateTime.UtcNow
+            });
 
             await _context.SaveChangesAsync();
             await tx.CommitAsync();
