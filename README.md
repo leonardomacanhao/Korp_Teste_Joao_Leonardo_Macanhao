@@ -1,221 +1,149 @@
-# 📦 Korp - Sistema de Gestão de Notas Fiscais e Estoque
+# Korp — Gestão de notas fiscais e estoque
 
-> Solução full-stack para emissão de notas fiscais, controle de estoque e integração entre microsserviços, construída com .NET 8 e Angular 17+.
+Aplicação full-stack para cadastro de produtos, emissão de notas fiscais e baixa de estoque. A solução separa o domínio de faturamento do domínio de estoque e oferece uma interface web responsiva.
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?logo=dotnet)
-![Angular](https://img.shields.io/badge/Angular-17-DD0031?logo=angular)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript)
+## Tecnologias
 
----
+- .NET 8, ASP.NET Core Web API e Entity Framework Core 8
+- SQLite com migrations versionadas
+- Angular 18, TypeScript, RxJS, Angular Material e SCSS
+- xUnit para testes automatizados do backend
 
-## 📖 Sobre o Projeto
+## Arquitetura
 
-O **Korp** é um sistema empresarial que simula o fluxo real de emissão de notas fiscais com débito automático em estoque. Foi desenvolvido seguindo práticas modernas de arquitetura, separando responsabilidades entre **Stock Service** (gestão de produtos) e **Billing Service** (lógica fiscal), garantindo escalabilidade, resiliência e manutenção simplificada.
+```text
+Angular (:4200)
+   ├── Stock Service (:5083) ── produtos, saldo e operações de estoque
+   └── Billing Service (:5002) ── notas fiscais
+              └── Stock Service ── baixa atômica em lote
+```
 
-O frontend foi construído com **Angular Material** e um **Design System Fluent personalizado**, priorizando usabilidade, acessibilidade e feedback visual em tempo real.
+O frontend organiza código por responsabilidade:
 
----
+- `core`: configuração e serviços compartilhados da aplicação;
+- `features`: telas agrupadas por funcionalidade;
+- `shared`: contratos usados por mais de uma funcionalidade.
 
-## 🛠️ Tecnologias
+A identidade da aplicação fica centralizada em `frontend/src/app/core/config/application.config.ts`. Nome, sigla e descrição são alterados em um único lugar e refletidos no título, cabeçalho, página inicial e rodapé.
 
-| Camada        | Tecnologias Utilizadas                                                                 |
-|---------------|----------------------------------------------------------------------------------------|
-| **Backend**   | .NET 8, C#, ASP.NET Core Web API, Entity Framework Core, SQLite, FluentValidation      |
-| **Frontend**  | Angular 17+, TypeScript, RxJS, Angular Material, SCSS (Fluent Design System)           |
-| **Arquitetura** | Microsserviços, RESTful APIs, Saga Pattern (integração síncrona), Injeção de Dependência |
-| **Banco**     | SQLite (Desenvolvimento), EF Core Migrations                                           |
-| **Ferramentas** | Git, VS Code, Visual Studio 2022, Angular CLI, Postman/Swagger                         |
+### Consistência da impressão
 
----
+Ao imprimir uma nota, o Billing Service envia todos os itens ao Stock Service em uma única requisição. O Stock Service:
 
-## 🏗️ Arquitetura
-- **Stock Service**: Gerencia produtos, saldos e soft delete.
-- **Billing Service**: Gerencia notas fiscais, numeração sequencial e orquestra o débito no estoque.
-- **Frontend**: Interface reativa com validação rigorosa, tratamento de erros e UX profissional.
+1. agrupa itens repetidos;
+2. valida produto, atividade e saldo;
+3. aplica as baixas dentro de uma transação;
+4. registra um identificador único da operação.
 
----
+O identificador torna a operação idempotente: uma repetição da mesma impressão não baixa o estoque duas vezes. As atualizações de saldo são condicionais no banco (`saldo >= quantidade`), evitando saldo negativo em requisições concorrentes. O Billing só fecha a nota após o Stock confirmar a baixa.
 
-## ✨ Funcionalidades
+Essa é uma integração HTTP síncrona com idempotência; não é uma transação distribuída nem uma Saga completa. Se a resposta se perder depois da baixa, uma nova tentativa reutiliza o mesmo identificador, recebe sucesso do Stock e permite que o Billing conclua o fechamento.
 
-✅ Cadastro completo de produtos (Criar, Editar, Visualizar)  
-✅ **Soft Delete**: Inativação lógica com prefixo `[INATIVO]` preservando histórico  
-✅ Emissão de Notas Fiscais com numeração automática (`NF-0001`, `NF-0002`...)  
-✅ Validação de estoque em tempo real antes da criação da NF  
-✅ Débito automático de saldo ao "Imprimir/Fechar" a nota  
-✅ **Resiliência**: Se o Stock Service estiver fora, a NF permanece "Aberta" e o usuário é notificado  
-✅ UI/UX Profissional: Design System consistente, loading states, animações e acessibilidade  
-✅ Tratamento de erros em camadas (Client + Server + Network)  
+## Funcionalidades
 
----
+- cadastro, edição, listagem e inativação lógica de produtos;
+- código de produto único;
+- criação de notas com validação de itens no cliente e no servidor;
+- numeração sequencial no formato `NF-0001`;
+- impressão/fechamento com baixa atômica de estoque;
+- proteção contra baixa duplicada e concorrente;
+- exclusão apenas de notas abertas;
+- estados de carregamento e mensagens de erro na interface.
 
-## 📋 Pré-requisitos
+## Pré-requisitos
 
-Antes de iniciar, certifique-se de ter instalado:
 - [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
-- [Node.js 18+ & npm](https://nodejs.org/)
-- [Angular CLI](https://angular.io/cli) (`npm install -g @angular/cli`)
-- [Git](https://git-scm.com/)
+- [Node.js](https://nodejs.org/) e npm
 
----
+## Execução local
 
-## 🚀 Instalação e Execução
+### 1. Stock Service
 
-### 1. Clonar o repositório
-```bash
-git clone https://github.com/leonardomacanhao/Korp_Teste_Joao_Leonardo_Macanhao.git
-cd Korp_Teste_Joao_Leonardo_Macanhao
-
-2. Configurar e rodar o Stock Service
-
+```powershell
 cd stock-service
 dotnet restore
 dotnet ef database update
-dotnet run --urls "http://localhost:5083"
+dotnet run
+```
 
-🌐 Swagger: http://localhost:5083/swagger
+Swagger: <http://localhost:5083/swagger>
 
-3. Configurar e rodar o Billing Service (novo terminal)
+### 2. Billing Service
 
+Em outro terminal:
+
+```powershell
 cd billing-service
 dotnet restore
 dotnet ef database update
-dotnet run --urls "http://localhost:5002"
-
-🌐 Swagger: http://localhost:5002/swagger
-
-4. Configurar e rodar o Frontend (novo terminal)
-
-cd frontend
-npm install
-ng serve
-
-🌐 Aplicação: http://localhost:4200
-
-🗄️ Banco de Dados
-O projeto utiliza SQLite para desenvolvimento local. As migrations já estão versionadas no repositório. Para recriar os bancos do zero:
-
-# Em cada pasta de serviço:
-dotnet ef database drop --force
-dotnet ef database update
-
-💡 Nota: Arquivos .db e .db-shm/.db-wal estão ignorados pelo .gitignore.
-
-🌐 Endpoints Principais
-📦 Stock Service (:5083)
-Método
-Rota
-Descrição
-GET
-/api/products
-Listar produtos ativos
-POST
-/api/products
-Criar novo produto
-PUT
-/api/products/{id}
-Atualizar produto
-DEL
-/api/products/{id}
-Soft delete (inativação)
-PUT
-/api/products/{id}/deduct
-Debitar quantidade do estoque
-📄 Billing Service (:5002)
-Método
-Rota
-Descrição
-GET
-/api/invoices
-Listar notas fiscais
-POST
-/api/invoices
-Criar nova NF (Aberta)
-POST
-/api/invoices/{id}/print
-Fechar NF e debitar estoque
-DEL
-/api/invoices/{id}
-Excluir NF (apenas se Aberta)
-
-🛡️ Resiliência e Tratamento de Falhas
-
-O sistema foi projetado para não corromper dados em cenários de indisponibilidade:
-Ao tentar fechar uma NF, o Billing Service chama o Stock Service.
-Se a resposta for 502/500 ou timeout, a transação não é consolidada.
-O status da NF permanece "Aberta".
-O frontend exibe um SnackBar vermelho explicativo.
-O usuário pode tentar novamente quando o serviço estiver estável.
-Isso simula um Saga Pattern síncrono, garantindo consistência eventual e experiência transparente.
-
-## 🔬 Teste E2E (Smoke) - Rápido
-
-Passos para executar um teste ponta-a-ponta rápido que cobre criação de produto, emissão e impressão/fechamento da nota:
-
-1. Abra três terminais diferentes.
-
-2. No primeiro terminal, execute o Stock Service:
-```bash
-cd stock-service
-dotnet restore
-dotnet ef database update
-dotnet run --urls "http://localhost:5083"
+dotnet run
 ```
 
-3. No segundo terminal, execute o Billing Service (apontando para o Stock):
-```bash
-cd billing-service
-dotnet restore
-dotnet ef database update
-ServiceUrls__StockService=http://localhost:5083 dotnet run --urls "http://localhost:5002"
-```
+Swagger: <http://localhost:5002/swagger>
 
-4. No terceiro terminal, sirva o frontend:
-```bash
+### 3. Frontend
+
+Em outro terminal:
+
+```powershell
 cd frontend
-npm install
+npm ci
 npm start
-# abrir http://localhost:4200 no navegador
 ```
 
-5. Fluxo de verificação (curl):
-```bash
-# criar produto no stock
-curl -X POST http://localhost:5083/api/products -H "Content-Type: application/json" -d '{"code":"E2E-1","description":"Prod E2E","stockBalance":5,"isActive":true}'
+Aplicação: <http://localhost:4200>
 
-# criar nota (substitua PRODUCT_ID pelo id retornado)
-curl -X POST http://localhost:5002/api/invoices -H "Content-Type: application/json" -d '[{"productId":1,"quantity":1}]'
+As URLs dos serviços ficam nos arquivos de ambiente do Angular. Origens permitidas, conexão com o banco e endereço do Stock Service ficam nos respectivos `appsettings.json` e podem ser sobrescritos por variáveis de ambiente.
 
-# imprimir nota (substitua INVOICE_ID pelo id retornado)
-curl -X POST http://localhost:5002/api/invoices/1/print
+## Endpoints principais
+
+### Stock Service
+
+| Método | Rota | Descrição |
+|---|---|---|
+| `GET` | `/api/products` | Lista produtos ativos |
+| `GET` | `/api/products/{id}` | Consulta um produto ativo |
+| `POST` | `/api/products` | Cria um produto |
+| `PUT` | `/api/products/{id}` | Atualiza um produto |
+| `DELETE` | `/api/products/{id}` | Inativa um produto |
+| `POST` | `/api/products/deductions` | Executa baixa idempotente em lote |
+
+### Billing Service
+
+| Método | Rota | Descrição |
+|---|---|---|
+| `GET` | `/api/invoices` | Lista notas e itens |
+| `GET` | `/api/invoices/{id}` | Consulta uma nota |
+| `POST` | `/api/invoices` | Cria uma nota aberta |
+| `POST` | `/api/invoices/{id}/print` | Baixa o estoque e fecha a nota |
+| `DELETE` | `/api/invoices/{id}` | Exclui uma nota aberta |
+
+## Validação
+
+Na raiz do repositório:
+
+```powershell
+dotnet test stock-service.Tests/stock-service.Tests.csproj
+dotnet test billing-service.Tests/billing-service.Tests.csproj
+
+cd frontend
+npm run build
 ```
 
-Se tudo ocorrer bem, a resposta do `print` retornará mensagem de sucesso e a nota ficará com `status: "Fechada"`.
+Os testes cobrem rollback por saldo insuficiente, idempotência, concorrência de baixa e manutenção do estado da nota em respostas de sucesso ou falha do Stock Service.
 
----
+## Estrutura
 
-📁 Estrutura do Projeto
-
+```text
 .
-├── billing-service/      # API .NET 8 (Notas Fiscais)
-│   ├── Controllers/
-│   ├── Data/
-│   ├── Models/
-│   └── Migrations/
-├── stock-service/        # API .NET 8 (Produtos/Estoque)
-│   ├── Controllers/
-│   ├── Data/
-│   ├── Models/
-│   └── Migrations/
-├── frontend/             # Angular 17 Application
-│   ├── src/app/
-│   │   ├── core/         # Services, Interceptors, Guards
-│   │   ├── features/     # Módulos de Produtos e Notas Fiscais
-│   │   └── shared/       # Models, Utils
-│   └── styles.scss       # Design System Global
-└── README.md
+├── billing-service/        # API de faturamento
+├── billing-service.Tests/  # testes de faturamento
+├── stock-service/          # API de produtos e estoque
+├── stock-service.Tests/    # testes de estoque
+└── frontend/               # aplicação Angular
+```
 
-👨‍ Autor
-Desenvolvido por João Leonardo Macanhão
-📧 [leonardomacanhao@gmail.com]
-🔗 [https://www.linkedin.com/in/joao-leonardo-macanhao]
+## Autor
+
+João Leonardo Macanhão<br>
+[LinkedIn](https://www.linkedin.com/in/joao-leonardo-macanhao) · [E-mail](mailto:leonardomacanhao@gmail.com)

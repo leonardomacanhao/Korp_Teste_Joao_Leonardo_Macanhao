@@ -32,7 +32,6 @@ dist/
 *.log
 .npm/
 .yarn/
-package-lock.json
 
 # =========================
 # VS Code / IDE
