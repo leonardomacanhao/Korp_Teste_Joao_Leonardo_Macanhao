@@ -70,17 +70,3 @@
   .korp-notes-page .btn-primary{width:100%;justify-content:center}
 }
 
-/* Status badge and print button styles from korp-notas */
-.korp-notes-page .status-badge{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:999px}
-.korp-notes-page .status-badge::before{content:"";width:6px;height:6px;border-radius:50%}
-.korp-notes-page .status-badge.closed{color:var(--green);background:rgba(74,222,128,0.12);border:1px solid rgba(74,222,128,0.25)}
-.korp-notes-page .status-badge.closed::before{background:var(--green);box-shadow:0 0 6px var(--green)}
-.korp-notes-page .status-badge.open{color:#fbbf24;background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.25)}
-.korp-notes-page .status-badge.open::before{background:#fbbf24;box-shadow:0 0 6px #fbbf24}
-.korp-notes-page .status-badge.cancelled{color:var(--red);background:rgba(248,113,113,0.12);border:1px solid rgba(248,113,113,0.25)}
-.korp-notes-page .status-badge.cancelled::before{background:var(--red);box-shadow:0 0 6px var(--red)}
-
-.korp-notes-page .btn-print{display:inline-flex;align-items:center;gap:7px;background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.3);color:var(--blue-light);padding:8px 15px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;transition:all .18s ease}
-.korp-notes-page .btn-print:hover{background:rgba(59,130,246,0.2);border-color:var(--blue-light)}
-.korp-notes-page .btn-print:disabled{opacity:0.45;cursor:not-allowed;background:rgba(255,255,255,0.03);border-color:rgba(255,255,255,0.04);color:var(--text-2)}
-

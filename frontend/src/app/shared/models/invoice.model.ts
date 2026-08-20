@@ -1,3 +1,5 @@
+import { INVOICE_STATUS } from '../../core/config/application.config';
+
 export interface InvoiceItem {
   id: number;
   invoiceId: number;
@@ -8,7 +10,7 @@ export interface InvoiceItem {
 export interface Invoice {
   id: number;
   number: string;
-  status: 'Aberta' | 'Fechada';
+  status: typeof INVOICE_STATUS[keyof typeof INVOICE_STATUS];
   createdAt: string;
   items: InvoiceItem[];
 }

@@ -4,5 +4,4 @@ export interface Product {
   description: string;
   stockBalance: number;
   isActive?: boolean;
-  rowVersion?: string | null;
 }

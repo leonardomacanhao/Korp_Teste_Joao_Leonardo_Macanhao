@@ -1,9 +1,9 @@
 <header>
   <nav>
     <div class="brand">
-      <div class="brand-mark">K</div>
+      <div class="brand-mark">{{ app.shortName }}</div>
       <div>
-        Korp <span class="brand-sub">— Sistema de Notas Fiscais</span>
+        {{ app.name }} <span class="brand-sub">— {{ app.description }}</span>
       </div>
     </div>
 
@@ -28,5 +28,5 @@
 </div>
 
 <footer>
-  © 2026 Korp. Todos os direitos reservados.
+  © {{ currentYear }} {{ app.name }}. Todos os direitos reservados.
 </footer>

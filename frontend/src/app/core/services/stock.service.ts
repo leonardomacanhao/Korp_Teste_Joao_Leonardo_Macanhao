@@ -50,11 +50,4 @@ export class StockService {
     );
   }
 
-  deductStock(id: number, quantity: number): Observable<void> {
-    return this.http.put<void>(`${this.apiUrl}/${id}/deduct`, quantity).pipe(
-      catchError(() => {
-        return throwError(() => new Error('Erro ao debitar estoque'));
-      })
-    );
-  }
 }

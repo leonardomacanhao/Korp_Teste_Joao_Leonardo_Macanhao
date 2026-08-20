@@ -10,6 +10,7 @@ import { Router, RouterLink } from '@angular/router';
 import { BillingService } from '../../../core/services/billing.service';
 import { Invoice } from '../../../shared/models/invoice.model';
 import { finalize } from 'rxjs';
+import { INVOICE_STATUS } from '../../../core/config/application.config';
 
 @Component({
   selector: 'app-invoice-list',
@@ -22,6 +23,7 @@ import { finalize } from 'rxjs';
   styleUrl: './invoice-list.component.scss'
 })
 export class InvoiceListComponent implements OnInit {
+  readonly invoiceStatus = INVOICE_STATUS;
   private billingService = inject(BillingService);
   private snackBar = inject(MatSnackBar);
   private router = inject(Router);
@@ -50,7 +52,7 @@ export class InvoiceListComponent implements OnInit {
   printInvoice(invoice: Invoice): void {
     if (this.processingInvoiceIds.has(invoice.id)) return;
 
-    if (invoice.status === 'Fechada') {
+    if (invoice.status === this.invoiceStatus.closed) {
       this.snackBar.open('Esta nota já foi impressa/fechada.', 'Fechar', { duration: 3000 });
       return;
     }
@@ -73,7 +75,7 @@ export class InvoiceListComponent implements OnInit {
   }
 
   deleteInvoice(invoice: Invoice): void {
-    if (invoice.status === 'Fechada') {
+    if (invoice.status === this.invoiceStatus.closed) {
       this.snackBar.open('Não é possível excluir uma nota já fechada.', 'Fechar', { duration: 3000 });
       return;
     }

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { APPLICATION_CONFIG } from '../../core/config/application.config';
 
 @Component({
   selector: 'app-home',
@@ -6,6 +7,8 @@ import { Component } from '@angular/core';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent {
+  readonly app = APPLICATION_CONFIG;
+
   updateCardGlow(event: MouseEvent): void {
     const card = event.currentTarget as HTMLElement;
     const rect = card.getBoundingClientRect();

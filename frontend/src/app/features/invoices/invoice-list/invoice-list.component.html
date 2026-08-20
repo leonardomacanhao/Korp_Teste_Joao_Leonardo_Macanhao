@@ -48,19 +48,19 @@
                 <td class="date-cell">{{ inv.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
                 <td>
                   <span class="status-badge"
-                        [class.open]="inv.status === 'Aberta'"
-                        [class.closed]="inv.status === 'Fechada'">
+                        [class.open]="inv.status === invoiceStatus.open"
+                        [class.closed]="inv.status === invoiceStatus.closed">
                     {{ inv.status }}
                   </span>
                 </td>
                 <td>
                   <div class="actions">
-                    <button class="btn-print" (click)="printInvoice(inv)" [disabled]="inv.status === 'Fechada' || processingInvoiceIds.has(inv.id)">
+                    <button class="btn-print" (click)="printInvoice(inv)" [disabled]="inv.status === invoiceStatus.closed || processingInvoiceIds.has(inv.id)">
                       <mat-icon>print</mat-icon>
-                      <span style="margin-left:8px">{{ inv.status === 'Fechada' ? 'Impresso' : processingInvoiceIds.has(inv.id) ? 'Processando...' : 'Imprimir' }}</span>
+                      <span style="margin-left:8px">{{ inv.status === invoiceStatus.closed ? 'Impresso' : processingInvoiceIds.has(inv.id) ? 'Processando...' : 'Imprimir' }}</span>
                     </button>
 
-                    <button class="icon-btn danger" (click)="deleteInvoice(inv)" *ngIf="inv.status === 'Aberta'" title="Excluir nota">
+                    <button class="icon-btn danger" (click)="deleteInvoice(inv)" *ngIf="inv.status === invoiceStatus.open" title="Excluir nota">
                       <mat-icon>delete</mat-icon>
                     </button>
                   </div>
