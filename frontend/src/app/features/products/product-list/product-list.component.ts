@@ -5,11 +5,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Router, RouterLink } from '@angular/router';
-import { EMPTY, catchError, finalize } from 'rxjs';
+import { EMPTY, catchError, filter, finalize, switchMap } from 'rxjs';
 
 import { Product } from '../../../shared/models/product.model';
 import { StockService } from '../../../core/services/stock.service';
+import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-product-list',
@@ -21,6 +23,7 @@ import { StockService } from '../../../core/services/stock.service';
     MatIconModule,
     MatProgressBarModule,
     MatSnackBarModule,
+    MatDialogModule,
     RouterLink
   ],
   templateUrl: './product-list.component.html',
@@ -29,6 +32,7 @@ import { StockService } from '../../../core/services/stock.service';
 export class ProductListComponent implements OnInit {
   private stockService = inject(StockService);
   private snackBar = inject(MatSnackBar);
+  private dialog = inject(MatDialog);
   private router = inject(Router);
 
   dataSource = new MatTableDataSource<Product>();
@@ -62,16 +66,27 @@ export class ProductListComponent implements OnInit {
   }
 
   confirmDelete(product: Product): void {
-    if (confirm(`Deseja realmente inativar "${product.description}"?`)) {
-      this.stockService.deleteProduct(product.id).subscribe({
-        next: () => {
-          this.snackBar.open('Produto inativado.', 'Fechar', { duration: 2500 });
-          this.loadProducts();
-        },
-        error: () => {
-          this.snackBar.open('Erro ao inativar produto.', 'Fechar', { duration: 4000 });
-        }
-      });
-    }
+    this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        title: 'Inativar produto?',
+        message: `O produto “${product.description}” deixará de aparecer nas listagens e não poderá ser usado em novas notas fiscais.`,
+        confirmLabel: 'Inativar produto'
+      },
+      panelClass: 'confirm-dialog-panel',
+      backdropClass: 'confirm-dialog-backdrop',
+      autoFocus: false,
+      restoreFocus: true
+    }).afterClosed().pipe(
+      filter((confirmed): confirmed is true => confirmed === true),
+      switchMap(() => this.stockService.deleteProduct(product.id))
+    ).subscribe({
+      next: () => {
+        this.snackBar.open('Produto inativado.', 'Fechar', { duration: 2500 });
+        this.loadProducts();
+      },
+      error: () => {
+        this.snackBar.open('Erro ao inativar produto.', 'Fechar', { duration: 4000 });
+      }
+    });
   }
 }

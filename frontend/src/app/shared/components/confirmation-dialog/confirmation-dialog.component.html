@@ -1,0 +1,20 @@
+<section class="confirm-dialog" role="alertdialog" [attr.aria-labelledby]="'confirm-dialog-title'">
+  <div class="confirm-dialog__icon">
+    <mat-icon>warning_amber</mat-icon>
+  </div>
+
+  <div class="confirm-dialog__content">
+    <h2 id="confirm-dialog-title">{{ data.title }}</h2>
+    <p>{{ data.message }}</p>
+  </div>
+
+  <div class="confirm-dialog__actions">
+    <button class="confirm-dialog__button confirm-dialog__button--secondary" type="button" (click)="cancel()">
+      Cancelar
+    </button>
+    <button class="confirm-dialog__button confirm-dialog__button--danger" type="button" (click)="confirm()">
+      <mat-icon>delete_outline</mat-icon>
+      {{ data.confirmLabel }}
+    </button>
+  </div>
+</section>

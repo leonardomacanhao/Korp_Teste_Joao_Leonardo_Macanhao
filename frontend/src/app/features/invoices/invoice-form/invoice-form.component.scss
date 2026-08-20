@@ -662,4 +662,25 @@ $transition-std:     all 0.18s ease;
 .korp-notes-page .panel .nf-btn:disabled,
 .korp-notes-page .panel .nf-btn-add:disabled { opacity: 0.58; }
 
+.korp-notes-page .panel .nf-btn-add {
+  height: 42px;
+  margin-top: 2px;
+  color: var(--blue-light);
+  background: rgba(59,130,246,0.08);
+  border: 1px dashed rgba(96,165,250,0.42);
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.korp-notes-page .panel .nf-btn-add:hover:not(:disabled) {
+  color: #fff;
+  background: rgba(59,130,246,0.16);
+  border-color: var(--blue-light);
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+}
+
+.korp-notes-page .panel .nf-btn-add:active:not(:disabled) {
+  background: rgba(59,130,246,0.22);
+}
+
 

@@ -6,18 +6,20 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Router, RouterLink } from '@angular/router';
 import { BillingService } from '../../../core/services/billing.service';
 import { Invoice } from '../../../shared/models/invoice.model';
-import { finalize } from 'rxjs';
+import { filter, finalize, switchMap } from 'rxjs';
 import { INVOICE_STATUS } from '../../../core/config/application.config';
+import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-invoice-list',
   standalone: true,
   imports: [
     CommonModule, MatTableModule, MatButtonModule, MatIconModule,
-    MatChipsModule, MatProgressBarModule, MatSnackBarModule, RouterLink
+    MatChipsModule, MatProgressBarModule, MatSnackBarModule, MatDialogModule, RouterLink
   ],
   templateUrl: './invoice-list.component.html',
   styleUrl: './invoice-list.component.scss'
@@ -26,6 +28,7 @@ export class InvoiceListComponent implements OnInit {
   readonly invoiceStatus = INVOICE_STATUS;
   private billingService = inject(BillingService);
   private snackBar = inject(MatSnackBar);
+  private dialog = inject(MatDialog);
   private router = inject(Router);
 
   dataSource = new MatTableDataSource<Invoice>();
@@ -80,20 +83,29 @@ export class InvoiceListComponent implements OnInit {
       return;
     }
 
-    if (confirm(`Tem certeza que deseja excluir a NF ${invoice.number}?`)) {
-      this.billingService.deleteInvoice(invoice.id).subscribe({
-        next: () => {
-          this.snackBar.open('Nota excluída com sucesso.', 'Fechar', { duration: 2500 });
-          this.loadInvoices();
-        },
-        error: (err) => {
-          this.snackBar.open(err.message || 'Erro ao excluir nota.', 'Fechar', { duration: 4000 });
-        }
-      });
-    }
+    this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        title: 'Excluir nota fiscal?',
+        message: `A nota ${invoice.number} e todos os seus itens serão removidos. Esta ação não poderá ser desfeita.`,
+        confirmLabel: 'Excluir nota'
+      },
+      panelClass: 'confirm-dialog-panel',
+      backdropClass: 'confirm-dialog-backdrop',
+      autoFocus: false,
+      restoreFocus: true
+    }).afterClosed().pipe(
+      filter((confirmed): confirmed is true => confirmed === true),
+      switchMap(() => this.billingService.deleteInvoice(invoice.id))
+    ).subscribe({
+      next: () => {
+        this.snackBar.open('Nota excluída com sucesso.', 'Fechar', { duration: 2500 });
+        this.loadInvoices();
+      },
+      error: (err) => {
+        this.snackBar.open(err.message || 'Erro ao excluir nota.', 'Fechar', { duration: 4000 });
+      }
+    });
   }
-
-  
 
   goToCreate(): void { this.router.navigate(['/invoices/new']); }
 }
