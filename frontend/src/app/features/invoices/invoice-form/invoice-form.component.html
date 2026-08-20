@@ -50,8 +50,7 @@
                 <div class="nf-select-wrapper" [class.nf-select-wrapper--disabled]="loadingProducts" [class.nf-select-wrapper--error]="item.get('productId')?.invalid && item.get('productId')?.touched">
                   <select
                     class="nf-select"
-                    formControlName="productId"
-                    [disabled]="loadingProducts">
+                    formControlName="productId">
                     <option value="" disabled selected>{{ loadingProducts ? 'Carregando...' : 'Selecione um produto' }}</option>
                     <option *ngFor="let p of products" [value]="p.id">
                       {{ p.code }} — {{ p.description }} ({{ p.stockBalance }} em estoque)
