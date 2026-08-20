@@ -4,6 +4,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 using StockService.Controllers;
 using StockService.Data;
 using StockService.Models;
@@ -82,8 +83,11 @@ public class StockControllerTests
         var r1 = await controller.DeductBatch(request);
         var r2 = await controller.DeductBatch(request);
 
+        ctx.ChangeTracker.Clear();
         var prod = ctx.Products.First();
         Assert.Equal(8, prod.StockBalance);
+        Assert.IsType<OkObjectResult>(r1);
+        Assert.IsType<OkObjectResult>(r2);
     }
 
     [Fact]
@@ -125,7 +129,12 @@ public class StockControllerTests
 
         using var vctx = new AppDbContext(options);
         var prod = vctx.Products.First();
-        Assert.InRange(prod.StockBalance, 0, 1);
-        Assert.True(prod.StockBalance == 0 || prod.StockBalance == 1);
+        Assert.Equal(0, prod.StockBalance);
+        Assert.Single(vctx.StockOperations);
+        Assert.Equal(1, new[] { task1.Result, task2.Result }.Count(result => result is OkObjectResult));
+
+        vctx.Database.CloseConnection();
+        SqliteConnection.ClearAllPools();
+        System.IO.File.Delete(dbFile);
     }
 }

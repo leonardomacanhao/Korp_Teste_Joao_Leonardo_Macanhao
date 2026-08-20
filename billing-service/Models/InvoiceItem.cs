@@ -9,3 +9,12 @@ public class InvoiceItem
     public int ProductId { get; set; }
     public int Quantity { get; set; }
 }
+
+public sealed class CreateInvoiceItemRequest
+{
+    [Range(1, int.MaxValue)]
+    public int ProductId { get; init; }
+
+    [Range(1, int.MaxValue)]
+    public int Quantity { get; init; }
+}

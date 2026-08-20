@@ -7,20 +7,14 @@ public class Product
     [Key]
     public int Id { get; set; }
 
-    [Required]
+    [Required, MaxLength(50)]
     public string Code { get; set; } = string.Empty;
 
-    [Required]
+    [Required, MaxLength(200)]
     public string Description { get; set; } = string.Empty;
 
-    [Range(0, double.MaxValue)]
+    [Range(0, int.MaxValue)]
     public int StockBalance { get; set; }
-    
-    // Explicit active flag instead of encoding state in the code string
-    public bool IsActive { get; set; } = true;
 
-    // Concurrency token to help with concurrent updates
-    [Timestamp]
-    public byte[]? RowVersion { get; set; }
-    
+    public bool IsActive { get; set; } = true;
 }

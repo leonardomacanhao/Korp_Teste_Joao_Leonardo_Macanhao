@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace billing_service.Migrations
+namespace BillingService.Migrations
 {
     [DbContext(typeof(BillingDbContext))]
     [Migration("20260412234103_InitialCreate")]
@@ -31,13 +31,18 @@ namespace billing_service.Migrations
 
                     b.Property<string>("Number")
                         .IsRequired()
+                        .HasMaxLength(20)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Status")
                         .IsRequired()
+                        .HasMaxLength(20)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Number")
+                        .IsUnique();
 
                     b.ToTable("Invoices");
                 });

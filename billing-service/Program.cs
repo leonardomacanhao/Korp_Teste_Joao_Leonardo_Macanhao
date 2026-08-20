@@ -3,14 +3,18 @@ using BillingService.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers(); // ← ESSENCIAL: Habilita os Controllers
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(options =>
 {
+    var allowedOrigins = builder.Configuration
+        .GetSection("Cors:AllowedOrigins")
+        .Get<string[]>() ?? [];
+
     options.AddPolicy("AllowAngular", policy =>
-        policy.WithOrigins("http://localhost:4200")
+        policy.WithOrigins(allowedOrigins)
               .AllowAnyMethod()
               .AllowAnyHeader());
 });
@@ -22,6 +26,7 @@ builder.Services.AddHttpClient("StockService", client =>
 {
     var stockUrl = builder.Configuration["ServiceUrls:StockService"] ?? "http://localhost:5083";
     client.BaseAddress = new Uri(stockUrl);
+    client.Timeout = TimeSpan.FromSeconds(5);
 });
 
 var app = builder.Build();
@@ -39,8 +44,5 @@ app.UseCors("AllowAngular");
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.Urls.Clear();
-app.Urls.Add("http://localhost:5002");
 
 app.Run();

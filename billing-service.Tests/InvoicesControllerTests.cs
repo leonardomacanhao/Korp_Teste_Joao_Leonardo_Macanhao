@@ -11,6 +11,7 @@ using BillingService.Controllers;
 using BillingService.Data;
 using BillingService.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
 namespace BillingService.Tests;
@@ -90,7 +91,7 @@ public class InvoicesControllerTests
         var client = new HttpClient(handler) { BaseAddress = new Uri("http://localhost:5083") };
         var factory = new SimpleHttpClientFactory(client);
 
-        var controller = new InvoicesController(ctx, factory);
+        var controller = new InvoicesController(ctx, factory, NullLogger<InvoicesController>.Instance);
 
         var result = await controller.PrintInvoice(invoice.Id);
 
@@ -115,7 +116,7 @@ public class InvoicesControllerTests
         var client = new HttpClient(handler) { BaseAddress = new Uri("http://localhost:5083") };
         var factory = new SimpleHttpClientFactory(client);
 
-        var controller = new InvoicesController(ctx, factory);
+        var controller = new InvoicesController(ctx, factory, NullLogger<InvoicesController>.Instance);
 
         var result = await controller.PrintInvoice(invoice.Id);
 
@@ -139,7 +140,7 @@ public class InvoicesControllerTests
         var client = new HttpClient(handler) { BaseAddress = new Uri("http://localhost:5083") };
         var factory = new SimpleHttpClientFactory(client);
 
-        var controller = new InvoicesController(ctx, factory);
+        var controller = new InvoicesController(ctx, factory, NullLogger<InvoicesController>.Instance);
 
         var result = await controller.PrintInvoice(invoice.Id);
 

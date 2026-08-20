@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace BillingService.Migrations
+namespace StockService.Migrations
 {
     /// <inheritdoc />
     public partial class AddIsActiveAndStockOperations : Migration
@@ -16,14 +16,7 @@ namespace BillingService.Migrations
                 table: "Products",
                 type: "INTEGER",
                 nullable: false,
-                defaultValue: false);
-
-            migrationBuilder.AddColumn<byte[]>(
-                name: "RowVersion",
-                table: "Products",
-                type: "BLOB",
-                rowVersion: true,
-                nullable: true);
+                defaultValue: true);
 
             migrationBuilder.CreateTable(
                 name: "StockOperations",
@@ -36,6 +29,12 @@ namespace BillingService.Migrations
                 {
                     table.PrimaryKey("PK_StockOperations", x => x.OperationId);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_Code",
+                table: "Products",
+                column: "Code",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -44,13 +43,14 @@ namespace BillingService.Migrations
             migrationBuilder.DropTable(
                 name: "StockOperations");
 
+            migrationBuilder.DropIndex(
+                name: "IX_Products_Code",
+                table: "Products");
+
             migrationBuilder.DropColumn(
                 name: "IsActive",
                 table: "Products");
 
-            migrationBuilder.DropColumn(
-                name: "RowVersion",
-                table: "Products");
         }
     }
 }

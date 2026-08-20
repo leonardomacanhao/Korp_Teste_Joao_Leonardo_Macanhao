@@ -5,8 +5,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors(options =>
 {
+    var allowedOrigins = builder.Configuration
+        .GetSection("Cors:AllowedOrigins")
+        .Get<string[]>() ?? [];
+
     options.AddPolicy("AllowAngular", policy =>
-        policy.WithOrigins("http://localhost:4200")
+        policy.WithOrigins(allowedOrigins)
               .AllowAnyMethod()
               .AllowAnyHeader());
 });
@@ -32,7 +36,5 @@ app.UseCors("AllowAngular");
 
 app.UseAuthorization();
 app.MapControllers();
-
-app.Urls.Add("http://localhost:5083");
 
 app.Run();

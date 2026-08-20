@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace billing_service.Migrations
+namespace BillingService.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -51,6 +51,12 @@ namespace billing_service.Migrations
                 name: "IX_InvoiceItems_InvoiceId",
                 table: "InvoiceItems",
                 column: "InvoiceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Invoices_Number",
+                table: "Invoices",
+                column: "Number",
+                unique: true);
         }
 
         /// <inheritdoc />
